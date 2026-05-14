@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__4a868e8e-131d-485e-be18-11511f22a75f__search_files",
+      "mcp__4a868e8e-131d-485e-be18-11511f22a75f__read_file_content",
+      "Bash(python3 -c ' *)",
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --no-src-dir --import-alias \"@/*\" --yes)"
+    ]
+  }
+}
