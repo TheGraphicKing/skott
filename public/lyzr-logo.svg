@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <!-- <> brackets -->
+  <text x="4" y="30" font-family="monospace" font-size="28" font-weight="700" fill="currentColor">&lt;</text>
+  <text x="88" y="30" font-family="monospace" font-size="28" font-weight="700" fill="currentColor">&gt;</text>
+  <!-- lyzr text -->
+  <text x="34" y="27" font-family="'DM Sans', sans-serif" font-size="18" font-weight="600" letter-spacing="1" fill="currentColor">lyzr</text>
+</svg>
