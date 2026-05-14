@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { CommandPalette } from "@/components/layout/CommandPalette";
 
 export const metadata: Metadata = {
   title: "Skott — CMO Office AgenticOS",
@@ -13,6 +14,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="h-full" style={{ background: "hsl(36,33%,94%)" }}>
         <div className="flex h-full overflow-hidden selection:bg-primary/30">
           <Sidebar />
+          <CommandPalette />
           <main
             className="flex-1 relative flex flex-col h-full overflow-hidden"
             style={{ marginLeft: "256px" }}

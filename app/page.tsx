@@ -1,862 +1,466 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  AlertTriangle,
-  CheckCircle2,
-  Info,
-  ArrowRight,
-  ClipboardCheck,
-  Clock,
-  ThumbsUp,
-  ThumbsDown,
-  Eye,
-  ChevronDown,
-  ChevronRight,
-  Send,
-  Mic,
-  FileText,
-  Sparkles,
-  Paperclip,
-  X,
-  PenLine,
-  Megaphone,
-  Target,
-  Globe,
-  Share2,
-  TrendingUp,
+  TrendingUp, AlertTriangle, CheckCircle2, Clock, Zap,
+  ArrowUpRight, ArrowDownRight, Brain, Rocket, Target, DollarSign,
+  BarChart3, Users, Megaphone, Shield, Circle,
+  ChevronRight, Sparkles, Globe, Bell,
 } from "lucide-react";
 
-// ─── Design tokens ──────────────────────────────────────────────────────────
-const PRIMARY = "#67391b";
-const PRIMARY_LIGHT = "rgba(103,57,27,0.10)";
-const SUCCESS = "hsl(142,55%,35%)";
-const WARNING = "hsl(38,80%,50%)";
-const DESTRUCTIVE = "hsl(0,72%,45%)";
+const PRIMARY = "hsl(25,62%,25%)";
+const MUTED = "hsl(25,20%,50%)";
+const CARD = "hsl(36,30%,97%)";
+const BORDER = "hsl(30,15%,87%)";
+const GREEN = "hsl(142,55%,35%)";
+const RED = "#dc2626";
+const AMBER = "#d97706";
+const BLUE = "#2563eb";
 
-// ─── CMO Journey cards ───────────────────────────────────────────────────────
-const cmoJourneys = [
-  {
-    label: "Blog & Content Engine",
-    desc: "Keyword research, AI drafting, SEO optimization & WordPress publishing pipeline",
-    path: "/content",
-    icon: PenLine,
-  },
-  {
-    label: "Demand Generation",
-    desc: "Campaign targeting, lead scoring, MQL attribution & pipeline acceleration",
-    path: "/performance-marketing",
-    icon: Megaphone,
-  },
-  {
-    label: "ABM Intelligence",
-    desc: "Account intent signals, personalized outreach, engagement tracking & deal influence",
-    path: "/growth",
-    icon: Target,
-  },
-  {
-    label: "SEO & Search",
-    desc: "Rankings, AEO citations, backlink velocity, keyword gaps & GEO positioning",
-    path: "/seo",
-    icon: Globe,
-  },
-  {
-    label: "Social & Influencer",
-    desc: "Multi-platform scheduling, trend radar, creator discovery & brand voice QC",
-    path: "/social-media",
-    icon: Share2,
-  },
-  {
-    label: "Performance Marketing",
-    desc: "Ad spend optimization, ROAS tracking, anomaly detection & budget reallocation",
-    path: "/performance-marketing",
-    icon: TrendingUp,
-  },
+const cmoKpis = [
+  { label: "Revenue Influenced", value: "$4.2M", delta: "+18.3%", dir: "up", sub: "vs last month", icon: DollarSign, color: GREEN },
+  { label: "Pipeline Contribution", value: "$12.8M", delta: "+24.1%", dir: "up", sub: "vs last quarter", icon: TrendingUp, color: BLUE },
+  { label: "Marketing CAC", value: "$284", delta: "-12.4%", dir: "down-good", sub: "vs Q1 avg $324", icon: Target, color: GREEN },
+  { label: "Blended ROAS", value: "4.2×", delta: "+0.8×", dir: "up", sub: "target: 3.5×", icon: BarChart3, color: GREEN },
+  { label: "Active Campaigns", value: "23", delta: "8 live", dir: "neutral", sub: "5 pending approval", icon: Rocket, color: PRIMARY },
+  { label: "Budget Utilized", value: "67%", delta: "$2.1M / $3.2M", dir: "neutral", sub: "Q2 allocation", icon: DollarSign, color: AMBER },
 ];
 
-// ─── Marketing Team Journey cards ────────────────────────────────────────────
-const teamJourneys = [
-  {
-    label: "My Content Queue",
-    desc: "Drafts pending review, scheduled posts, approvals & content calendar tasks",
-    path: "/content",
-    icon: PenLine,
-  },
-  {
-    label: "Campaign Tasks",
-    desc: "Active campaign to-dos, asset requests, copy reviews & launch checklists",
-    path: "/performance-marketing",
-    icon: Megaphone,
-  },
-  {
-    label: "Social Calendar",
-    desc: "Upcoming posts, platform-specific scheduling & engagement tracking",
-    path: "/social-media",
-    icon: Share2,
-  },
-  {
-    label: "Keyword Assignments",
-    desc: "Assigned clusters, gap analysis tasks, ranking alerts & content briefs",
-    path: "/seo",
-    icon: Globe,
-  },
-  {
-    label: "Outreach Sequences",
-    desc: "ABM sequences in-flight, reply handling, meeting links & follow-up queues",
-    path: "/growth",
-    icon: Target,
-  },
-  {
-    label: "Analytics Reports",
-    desc: "Weekly performance snapshots, channel attribution & stakeholder summaries",
-    path: "/chief-of-staff",
-    icon: TrendingUp,
-  },
+const campaigns = [
+  { name: "Q2 Enterprise Launch", status: "live", budget: "$450K", spent: 72, ctr: "3.2%", roas: "5.1×", team: ["SM", "AK", "RB"], risk: "low" },
+  { name: "EMEA Expansion Wave", status: "at-risk", budget: "$280K", spent: 58, ctr: "1.8%", roas: "2.4×", team: ["JL", "PK"], risk: "high" },
+  { name: "LinkedIn ABM — Enterprise", status: "live", budget: "$85K", spent: 44, ctr: "4.7%", roas: "6.8×", team: ["SM", "MR"], risk: "low" },
+  { name: "AI Tools Webinar Series", status: "live", budget: "$45K", spent: 81, ctr: "—", roas: "—", team: ["AK"], risk: "low", extra: "1,247 regs" },
+  { name: "Product Update Awareness", status: "scheduled", budget: "$120K", spent: 0, ctr: "—", roas: "—", team: ["RB", "JL"], risk: "low", extra: "Jun 3" },
+  { name: "G2 Review Push", status: "paused", budget: "$32K", spent: 91, ctr: "2.1%", roas: "3.8×", team: ["MR"], risk: "medium" },
 ];
 
-// ─── CMO insights (mock) ─────────────────────────────────────────────────────
-const cmoInsights = [
-  {
-    id: "i1",
-    severity: "critical",
-    headline: "Pipeline Coverage Below 3× — Q2 at Risk",
-    summary: "Marketing-sourced pipeline is $2.4M short of 3× coverage ratio required by RevOps. Content MQLs down 18% MoM.",
-    actionLabel: "Investigate →",
-  },
-  {
-    id: "i2",
-    severity: "warning",
-    headline: "LinkedIn CPL Spike — 42% Above Benchmark",
-    summary: "Paid LinkedIn cost-per-lead rose from $84 to $119 in the past 14 days. Creative fatigue detected across 3 ad sets.",
-    actionLabel: "Review →",
-  },
-  {
-    id: "i3",
-    severity: "positive",
-    headline: "Organic Share of Voice +6 pts in 30 Days",
-    summary: "SEO agent added 14 AEO-optimized articles. AI citation appearances in SGE results increased from 12 to 31.",
-    actionLabel: "View report →",
-  },
-  {
-    id: "i4",
-    severity: "info",
-    headline: "Competitor TechCorp Raised $120M Series C",
-    summary: "Signal intelligence flagged funding announcement. Sales enablement deck update recommended within 72 hours.",
-    actionLabel: "Draft response →",
-  },
-  {
-    id: "i5",
-    severity: "warning",
-    headline: "Email Deliverability Rate Dropped to 91%",
-    summary: "HubSpot domain health score degraded. SPF/DKIM misalignment detected on 2 sending domains.",
-    actionLabel: "Fix now →",
-  },
-  {
-    id: "i6",
-    severity: "positive",
-    headline: "Webinar Registrations Beat Target by 34%",
-    summary: "'AI in Revenue Operations' webinar hit 2,340 registrations vs 1,750 target. Highest-performing invite copy variant surfaced.",
-    actionLabel: "See breakdown →",
-  },
+const aiRecs = [
+  { id: 1, icon: AlertTriangle, color: RED, title: "Pause EMEA Meta Ads — underperforming", body: "ROAS 2.4× vs 4× target. Reallocating $82K to LinkedIn ABM saves est. $34K CAC.", action: "Auto-reallocate", tag: "Budget" },
+  { id: 2, icon: TrendingUp, color: BLUE, title: "Scale LinkedIn ABM — top performer at 6.8× ROAS", body: "47% win-rate on enterprise deals. Increase budget by 40% ($34K) for max impact.", action: "Increase Budget", tag: "Growth" },
+  { id: 3, icon: Brain, color: GREEN, title: "SEO gap: 'AI marketing automation' (8.4K/mo)", body: "Zero coverage. Competitors rank #1–3. Create topic cluster now to capture traffic.", action: "Generate Brief", tag: "SEO" },
+  { id: 4, icon: Megaphone, color: AMBER, title: "Repurpose webinar → campaign assets", body: "AI Tools Webinar has 1,247 registrations. Extract 12 clips for LinkedIn + email.", action: "Start Repurpose", tag: "Content" },
+  { id: 5, icon: Shield, color: PRIMARY, title: "Q3 risk: August seasonality -23% engagement", body: "Historical data for B2B SaaS. Pre-load campaigns now to avoid pipeline dip.", action: "View Q3 Plan", tag: "Strategy" },
 ];
 
-// ─── Team insights (mock) ────────────────────────────────────────────────────
-const teamInsights = [
-  {
-    id: "t1",
-    severity: "warning",
-    headline: "3 Blog Drafts Overdue for Review",
-    summary: "The April keyword cluster has 3 posts exceeding 5-day SLA. Awaiting your approval before scheduling.",
-    actionLabel: "Review drafts →",
-  },
-  {
-    id: "t2",
-    severity: "info",
-    headline: "Social Calendar Gap Next Week",
-    summary: "Tuesday–Thursday have no scheduled posts across LinkedIn and Twitter. Content queue has 4 ready-to-publish pieces.",
-    actionLabel: "Schedule now →",
-  },
-  {
-    id: "t3",
-    severity: "positive",
-    headline: "Your ABM Sequence Hit 48% Reply Rate",
-    summary: "The 'Fintech Q2 Targets' sequence is performing 2.3× above team average. Consider scaling to 50 more accounts.",
-    actionLabel: "Scale up →",
-  },
-  {
-    id: "t4",
-    severity: "critical",
-    headline: "Google Analytics Tracking Broken on /pricing",
-    summary: "GA4 event loss detected since May 10. ~6,400 sessions untracked. Immediate tag fix required.",
-    actionLabel: "Fix tracking →",
-  },
-  {
-    id: "t5",
-    severity: "info",
-    headline: "New Keyword Cluster Assigned — 'Revenue AI'",
-    summary: "18 keywords with avg 3,200 monthly searches added to your queue. 4 content briefs auto-generated.",
-    actionLabel: "View briefs →",
-  },
-  {
-    id: "t6",
-    severity: "positive",
-    headline: "Weekly Report Ready for Stakeholders",
-    summary: "Auto-generated marketing performance report for May 6–12 is ready. Covers MQLs, pipeline, spend, and SEO.",
-    actionLabel: "Send report →",
-  },
+const competitorAlerts = [
+  { competitor: "HubSpot", alert: "Launched AI Content Hub — 240+ press mentions in 48h", time: "2h ago", severity: "high" },
+  { competitor: "Salesforce", alert: "Increased G2 review spend 3× this quarter targeting 'CRM' keywords", time: "6h ago", severity: "medium" },
+  { competitor: "Marketo", alert: "New SERP position #2 for 'marketing automation platform' — up from #7", time: "1d ago", severity: "medium" },
+  { competitor: "6sense", alert: "Product launch signals detected via LinkedIn AI intent monitoring", time: "2d ago", severity: "low" },
 ];
 
-// ─── Pending actions (mock) ──────────────────────────────────────────────────
-const cmoPendingActions = [
-  {
-    id: "pa1",
-    type: "approval",
-    title: "LinkedIn Ads Budget Increase — +$45K",
-    description: "Agent recommends shifting $45K from Google Display to LinkedIn for ABM targeting. ROAS model projects 2.1× return on incremental spend.",
-    amount: "$45K",
-    urgency: "high",
-    dueDate: "May 16, 2026",
-    category: "Paid Media",
-  },
-  {
-    id: "pa2",
-    type: "approval",
-    title: "Q3 Campaign Calendar — 28 Campaigns",
-    description: "Proposed Q3 calendar with 28 campaigns across demand gen, content, events and brand. Requires CMO sign-off before agency briefing.",
-    amount: undefined,
-    urgency: "high",
-    dueDate: "May 17, 2026",
-    category: "Strategy",
-  },
-  {
-    id: "pa3",
-    type: "review",
-    title: "Churn Attribution Analysis — April Cohort",
-    description: "Agent flagged marketing-influenced churn at 6.2% in April cohort — 2× benchmark. Exit surveys cite misaligned messaging vs. product reality.",
-    amount: undefined,
-    urgency: "critical",
-    dueDate: "May 15, 2026",
-    category: "Retention",
-  },
-  {
-    id: "pa4",
-    type: "approval",
-    title: "Event Sponsorship — SaaStr Annual 2026",
-    description: "Proposal for Platinum sponsorship at SaaStr ($87K). Includes keynote slot, booth, and 2 sponsored sessions. ROI model attached.",
-    amount: "$87K",
-    urgency: "medium",
-    dueDate: "May 20, 2026",
-    category: "Events",
-  },
-  {
-    id: "pa5",
-    type: "review",
-    title: "Brand Compliance Audit — Q1 Findings",
-    description: "Brand QC agent flagged 34 assets with off-brand usage across 6 teams. Recommends mandatory brand training and asset library refresh.",
-    amount: undefined,
-    urgency: "medium",
-    dueDate: "May 19, 2026",
-    category: "Brand",
-  },
+const funnel = [
+  { stage: "Impressions", value: "14.2M", pct: 100 },
+  { stage: "Website Visitors", value: "284K", pct: 68, conv: "2.0%" },
+  { stage: "Leads", value: "8,420", pct: 52, conv: "2.97%" },
+  { stage: "MQLs", value: "2,106", pct: 38, conv: "25.0%" },
+  { stage: "SQLs", value: "631", pct: 26, conv: "30.0%" },
+  { stage: "Opportunities", value: "214", pct: 16, conv: "33.9%" },
+  { stage: "Revenue Won", value: "$4.2M", pct: 10, conv: "~$20K ACV" },
 ];
 
-// ─── Integrated systems ──────────────────────────────────────────────────────
-const integratedSystems = [
-  { id: "hs", name: "HubSpot" },
-  { id: "ga4", name: "GA4" },
-  { id: "apollo", name: "Apollo" },
-  { id: "semrush", name: "SEMrush" },
-  { id: "li", name: "LinkedIn Ads" },
-  { id: "sf", name: "Salesforce" },
+const myTasks = [
+  { title: "Review Q2 Enterprise campaign copy", due: "Today, 2:00 PM", priority: "high", campaign: "Q2 Enterprise Launch" },
+  { title: "Approve LinkedIn carousel assets (6 slides)", due: "Today, 5:00 PM", priority: "high", campaign: "LinkedIn ABM" },
+  { title: "SEO brief for 'AI marketing automation'", due: "Tomorrow", priority: "medium", campaign: "SEO Hub" },
+  { title: "Edit webinar follow-up email sequence", due: "Tomorrow", priority: "medium", campaign: "AI Webinar" },
+  { title: "Update EMEA campaign messaging", due: "Jun 2", priority: "low", campaign: "EMEA Expansion" },
 ];
 
-// ─── Animation variants ──────────────────────────────────────────────────────
-const containerVariants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1, transition: { staggerChildren: 0.07 } },
-} as const;
+const pendingApprovals = [
+  { title: "EMEA LinkedIn Ad Set — 4 variants", type: "Ad Creative", requestor: "Priya K.", time: "1h ago" },
+  { title: "Q2 Blog Post: 'AI in B2B Marketing'", type: "Content", requestor: "Alex M.", time: "3h ago" },
+  { title: "G2 Review Email Campaign", type: "Email", requestor: "Ryan B.", time: "5h ago" },
+];
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 14 },
-  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } },
+const publishQueue = [
+  { title: "LinkedIn: AI webinar recap thread", platform: "LinkedIn", time: "Today 4:00 PM", status: "scheduled" },
+  { title: "Twitter/X: Product feature announcement", platform: "X", time: "Today 6:00 PM", status: "scheduled" },
+  { title: "Blog: Top 10 AI marketing tools 2025", platform: "Blog", time: "Jun 3 9:00 AM", status: "draft" },
+  { title: "Email: EMEA lead nurture sequence #3", platform: "Email", time: "Jun 4 8:00 AM", status: "approved" },
+];
+
+const statusStyle: Record<string, { label: string; color: string; bg: string }> = {
+  live: { label: "Live", color: GREEN, bg: "hsl(142,55%,93%)" },
+  "at-risk": { label: "At Risk", color: RED, bg: "#fef2f2" },
+  scheduled: { label: "Scheduled", color: BLUE, bg: "#eff6ff" },
+  paused: { label: "Paused", color: AMBER, bg: "#fffbeb" },
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-function severityColor(s: string) {
-  if (s === "critical") return DESTRUCTIVE;
-  if (s === "warning") return WARNING;
-  if (s === "positive") return SUCCESS;
-  return PRIMARY;
-}
+const riskBorder: Record<string, string> = { high: "#dc2626", medium: "#d97706", low: "hsl(142,55%,35%)" };
 
-function SeverityIcon({ severity }: { severity: string }) {
-  const color = severityColor(severity);
-  const cls = "w-3.5 h-3.5 flex-shrink-0";
-  if (severity === "critical" || severity === "warning")
-    return <AlertTriangle className={cls} style={{ color }} />;
-  if (severity === "positive")
-    return <CheckCircle2 className={cls} style={{ color }} />;
-  return <Info className={cls} style={{ color }} />;
-}
-
-function urgencyBorder(u: string) {
-  if (u === "critical") return `1px solid ${DESTRUCTIVE}33`;
-  if (u === "high") return `1px solid ${WARNING}33`;
-  return "1px solid hsl(30,15%,85%)";
-}
-
-function urgencyIconStyle(u: string): React.CSSProperties {
-  if (u === "critical") return { background: `${DESTRUCTIVE}18`, color: DESTRUCTIVE };
-  if (u === "high") return { background: `${WARNING}18`, color: WARNING };
-  return { background: PRIMARY_LIGHT, color: PRIMARY };
-}
-
-function urgencyBadgeStyle(u: string): React.CSSProperties {
-  if (u === "critical") return { background: `${DESTRUCTIVE}15`, color: DESTRUCTIVE };
-  if (u === "high") return { background: `${WARNING}15`, color: WARNING };
-  return { background: "hsl(25,20%,50%,0.1)", color: "hsl(25,20%,50%)" };
-}
-
-// ─── Main component ───────────────────────────────────────────────────────────
-export default function CommandCenter() {
-  const router = useRouter();
-  const [query, setQuery] = useState("");
-  const [attachment, setAttachment] = useState<{ name: string; content: string } | null>(null);
-  const [activeView, setActiveView] = useState<"cmo" | "team">("cmo");
-  const [dismissedActions, setDismissedActions] = useState<Set<string>>(new Set());
-  const [showAllActions, setShowAllActions] = useState(false);
-  const [showAllInsights, setShowAllInsights] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const journeys = activeView === "cmo" ? cmoJourneys : teamJourneys;
-  const insights = activeView === "cmo" ? cmoInsights : teamInsights;
-  const allActions = cmoPendingActions.filter((a) => !dismissedActions.has(a.id));
-  const displayedActions = showAllActions ? allActions : allActions.slice(0, 3);
-  const hasMoreActions = allActions.length > 3 && !showAllActions;
-  const displayedInsights = showAllInsights ? insights : insights.slice(0, 3);
-  const hasMoreInsights = insights.length > 3 && !showAllInsights;
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      alert("File size must be under 2MB.");
-      e.target.value = "";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      const content = ev.target?.result as string;
-      setAttachment({ name: file.name, content });
-    };
-    reader.readAsText(file);
-    e.target.value = "";
-  };
-
-  const handleQuerySubmit = () => {
-    if (!query.trim() && !attachment) return;
-    const params = new URLSearchParams();
-    if (query.trim()) params.set("message", query.trim());
-    if (attachment) sessionStorage.setItem("mktg_attachment", JSON.stringify(attachment));
-    router.push(`/agent-console?${params.toString()}`);
-  };
+export default function HomePage() {
+  const [view, setView] = useState<"cmo" | "marketer">("cmo");
+  const [appliedRecs, setAppliedRecs] = useState<Set<number>>(new Set());
 
   return (
-    <div className="p-6 max-w-[1100px] mx-auto space-y-4 pb-10">
-      {/* ── Hero / Search ─────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative flex flex-col items-center text-center pt-16 pb-8"
-      >
-        {/* View toggle — absolute top-right */}
-        <div className="absolute right-0 top-0 flex items-center rounded-xl overflow-hidden border"
-          style={{ borderColor: "hsl(30,15%,85%)", background: "hsl(36,30%,97%)" }}>
-          <button
-            onClick={() => { setActiveView("cmo"); setShowAllInsights(false); setShowAllActions(false); }}
-            className="px-4 py-2 text-[11.5px] font-semibold transition-all"
-            style={
-              activeView === "cmo"
-                ? { background: PRIMARY, color: "hsl(36,33%,96%)" }
-                : { background: "transparent", color: "hsl(25,20%,50%)" }
-            }
-          >
-            CMO Office
-          </button>
-          <button
-            onClick={() => { setActiveView("team"); setShowAllInsights(false); setShowAllActions(false); }}
-            className="px-4 py-2 text-[11.5px] font-semibold transition-all"
-            style={
-              activeView === "team"
-                ? { background: PRIMARY, color: "hsl(36,33%,96%)" }
-                : { background: "transparent", color: "hsl(25,20%,50%)" }
-            }
-          >
-            Marketing Team
-          </button>
-        </div>
-
-        {/* Logo */}
-        <img
-          src="/lyzr-logo.png"
-          alt="Lyzr"
-          className="h-8 object-contain mb-4"
-        />
-
-        {/* Headline */}
-        <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "hsl(25,40%,18%)" }}>
-          CMO Office{" "}
-          <span style={{ color: PRIMARY }}>AgenticOS</span>
-        </h1>
-        <p className="text-sm mt-1" style={{ color: "hsl(25,20%,45%)" }}>
-          AgenticOS — Autonomous marketing intelligence for the modern enterprise
-        </p>
-
-        {/* Search bar */}
-        <div className="mt-5 w-full max-w-2xl">
-          <input
-            ref={fileInputRef}
-            type="file"
-            onChange={handleFileSelect}
-            accept=".csv,.json,.txt,.md,.xml,.tsv"
-            className="hidden"
-          />
-          <div className="relative">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-1 rounded-lg transition-colors"
-              style={{ color: "hsl(25,20%,60%)" }}
-              title="Attach file"
-            >
-              <Paperclip className="w-4 h-4" />
+    <div className="min-h-full" style={{ background: "hsl(36,33%,94%)" }}>
+      {/* Page Header */}
+      <div className="sticky top-0 z-30 px-8 pt-6 pb-4" style={{ background: "hsl(36,33%,94%)", borderBottom: `1px solid ${BORDER}` }}>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold" style={{ color: "#3a1f0e" }}>
+              {view === "cmo" ? "CMO Command Center" : "Marketing Workspace"}
+            </h1>
+            <p className="text-sm mt-0.5" style={{ color: MUTED }}>
+              {view === "cmo" ? "Executive intelligence dashboard — Thursday, May 14, 2026" : "Your tasks, campaigns, and publishing queue"}
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex rounded-lg p-1 gap-1" style={{ background: "hsl(36,30%,90%)", border: `1px solid ${BORDER}` }}>
+              {(["cmo", "marketer"] as const).map(r => (
+                <button key={r} onClick={() => setView(r)}
+                  className="px-4 py-1.5 rounded-md text-sm font-medium transition-all"
+                  style={view === r ? { background: "#3a1f0e", color: "#fff" } : { color: MUTED }}>
+                  {r === "cmo" ? "CMO View" : "Marketer View"}
+                </button>
+              ))}
+            </div>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white transition-all hover:opacity-90" style={{ background: PRIMARY }}>
+              <Zap className="w-4 h-4" /> Ask AI
             </button>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleQuerySubmit()}
-              placeholder="How can I help?"
-              className="w-full border rounded-2xl pl-11 pr-24 py-3.5 text-sm focus:outline-none focus:ring-2 placeholder:text-muted-foreground/40"
-              style={{
-                background: "hsl(36,30%,97%,0.8)",
-                backdropFilter: "blur(16px)",
-                borderColor: "hsl(30,15%,85%)",
-                color: "hsl(25,40%,18%)",
-                boxShadow: "0 4px 24px rgba(0,0,0,0.06),0 1px 4px rgba(0,0,0,0.04)",
-              }}
-            />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-              <button
-                className="p-2 rounded-lg transition-colors"
-                style={{ color: "hsl(25,20%,60%)" }}
-              >
-                <Mic className="w-4 h-4" />
-              </button>
-              <button
-                onClick={handleQuerySubmit}
-                disabled={!query.trim() && !attachment}
-                className="p-2.5 rounded-xl transition-all shadow-sm disabled:opacity-30 disabled:cursor-not-allowed"
-                style={{ background: PRIMARY, color: "hsl(36,33%,96%)" }}
-              >
-                <Send className="w-3.5 h-3.5" />
-              </button>
-            </div>
+            <button className="relative p-2 rounded-lg transition-all hover:bg-white/60" style={{ color: MUTED }}>
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500" />
+            </button>
           </div>
-
-          {/* Attachment pill */}
-          <AnimatePresence>
-            {attachment && (
-              <motion.div
-                initial={{ opacity: 0, y: -4, height: 0 }}
-                animate={{ opacity: 1, y: 0, height: "auto" }}
-                exit={{ opacity: 0, y: -4, height: 0 }}
-                className="mt-2 flex items-center gap-2 rounded-lg px-3 py-2 border"
-                style={{ background: "hsl(36,30%,97%)", borderColor: "hsl(30,15%,85%)" }}
-              >
-                <FileText className="w-3.5 h-3.5 flex-shrink-0" style={{ color: PRIMARY }} />
-                <span className="text-xs truncate flex-1" style={{ color: "hsl(25,40%,18%)" }}>
-                  {attachment.name}
-                </span>
-                <span className="text-[10px] flex-shrink-0" style={{ color: "hsl(25,20%,55%)" }}>
-                  {(attachment.content.length / 1024).toFixed(1)}KB
-                </span>
-                <button
-                  onClick={() => setAttachment(null)}
-                  className="p-0.5 rounded transition-colors flex-shrink-0"
-                >
-                  <X className="w-3 h-3" style={{ color: "hsl(25,20%,55%)" }} />
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Integrated systems row */}
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="mt-5 w-full"
-          >
-            <div className="flex items-center justify-center gap-4 flex-wrap">
-              <span
-                className="text-[10px] font-semibold uppercase tracking-wider whitespace-nowrap"
-                style={{ color: "hsl(25,20%,55%)" }}
-              >
-                Integrated Systems
-              </span>
-              {integratedSystems.map((sys) => (
-                <span
-                  key={sys.id}
-                  className="text-[10.5px] font-medium px-2.5 py-1 rounded-full border"
-                  style={{
-                    background: "hsl(36,30%,97%)",
-                    borderColor: "hsl(30,15%,85%)",
-                    color: "hsl(25,30%,40%)",
-                  }}
-                >
-                  {sys.name}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Agent Journeys header */}
-          <div className="flex items-center gap-2 mt-6 mb-2 w-full">
-            <Sparkles className="w-3.5 h-3.5" style={{ color: PRIMARY }} />
-            <h2
-              className="text-xs font-semibold uppercase tracking-wide"
-              style={{ color: "hsl(25,40%,18%)" }}
-            >
-              ✦ Agent Journeys
-            </h2>
-          </div>
-
-          {/* Journey cards — 2-col grid */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeView}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.2 }}
-              className="grid grid-cols-2 gap-3 w-full"
-            >
-              {journeys.map((card, idx) => (
-                <div key={card.path + card.label} className="relative">
-                  {/* Tooltip on first card — positioned below so it's not clipped */}
-                  {idx === 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.5 }}
-                      className="absolute top-full left-0 mt-2 z-10 pointer-events-none flex flex-col items-start"
-                    >
-                      <div
-                        className="w-0 h-0"
-                        style={{
-                          borderLeft: "6px solid transparent",
-                          borderRight: "6px solid transparent",
-                          borderBottom: `6px solid ${PRIMARY}`,
-                          marginLeft: 16,
-                        }}
-                      />
-                      <div
-                        className="text-[10px] font-medium px-3 py-2 rounded-lg shadow-lg leading-relaxed"
-                        style={{ background: PRIMARY, color: "hsl(36,33%,96%)" }}
-                      >
-                        {activeView === "cmo"
-                          ? "Start here — analyze content gaps, flag underperforming keywords & generate pipeline content"
-                          : "Start here — review your queue, prioritize drafts & launch today's tasks"}
-                      </div>
-                    </motion.div>
-                  )}
-                  <Link href={card.path}>
-                    <motion.div
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.08 + idx * 0.05 }}
-                      className="group flex items-center gap-3.5 px-4 py-3.5 rounded-xl border transition-all cursor-pointer"
-                      style={{
-                        background: "rgba(255,255,255,0.6)",
-                        backdropFilter: "blur(8px)",
-                        borderColor: idx === 0 ? `${PRIMARY}28` : "hsl(30,15%,85%,0.6)",
-                        boxShadow: idx === 0 ? `0 0 0 1px ${PRIMARY}12` : undefined,
-                      }}
-                    >
-                      <div
-                        className="p-2 rounded-lg transition-colors flex-shrink-0"
-                        style={{ background: PRIMARY_LIGHT, color: PRIMARY }}
-                      >
-                        <card.icon className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0 flex-1 text-left">
-                        <span
-                          className="text-sm font-semibold block transition-colors"
-                          style={{ color: "hsl(25,40%,18%)" }}
-                        >
-                          {card.label}
-                        </span>
-                        <p
-                          className="text-[11px] leading-relaxed mt-0.5"
-                          style={{ color: "hsl(25,20%,50%)" }}
-                        >
-                          {card.desc}
-                        </p>
-                      </div>
-                      <ChevronRight
-                        className="w-4 h-4 flex-shrink-0 transition-all group-hover:translate-x-0.5"
-                        style={{ color: "hsl(25,20%,60%)" }}
-                      />
-                    </motion.div>
-                  </Link>
-                </div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </motion.div>
-
-      {/* ── Insights + Actions ─────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        {/* Agent Insights — col-span-3 */}
-        <div className="lg:col-span-3 space-y-0">
-          <div className="flex items-center gap-1.5 mb-2">
-            <Info className="w-3.5 h-3.5" style={{ color: PRIMARY }} />
-            <h2 className="text-xs font-semibold" style={{ color: "hsl(25,40%,18%)" }}>
-              Agent Insights
-            </h2>
-            <span
-              className="text-[9px] font-medium px-1.5 py-0.5 rounded-full"
-              style={{ background: PRIMARY_LIGHT, color: PRIMARY }}
-            >
-              {insights.length}
-            </span>
-          </div>
-
-          <div
-            className="rounded-2xl border p-1"
-            style={{
-              background: "rgba(255,255,255,0.4)",
-              backdropFilter: "blur(8px)",
-              borderColor: "hsl(30,15%,85%,0.5)",
-            }}
-          >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeView + "-insights"}
-                variants={containerVariants}
-                initial="hidden"
-                animate="show"
-                className="space-y-0"
-              >
-                {displayedInsights.map((insight, idx) => (
-                  <motion.div
-                    key={insight.id}
-                    variants={itemVariants}
-                    className="group flex items-start gap-2.5 py-2.5 px-2 rounded-xl transition-colors hover:bg-white/50"
-                    style={{ borderTop: idx !== 0 ? "1px solid hsl(30,15%,88%,0.4)" : undefined }}
-                  >
-                    <div className="mt-0.5 flex-shrink-0">
-                      <SeverityIcon severity={insight.severity} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[12px] leading-snug" style={{ color: "hsl(25,40%,18%)" }}>
-                        <span className="font-semibold">{insight.headline}</span>
-                        <span style={{ color: "hsl(25,20%,50%)" }}> — {insight.summary}</span>
-                      </p>
-                      <button
-                        onClick={() => router.push("/agent-console")}
-                        className="inline-flex items-center text-[10px] font-medium transition-colors mt-0.5 opacity-0 group-hover:opacity-100"
-                        style={{ color: PRIMARY }}
-                      >
-                        {insight.actionLabel}
-                        <ArrowRight className="w-3 h-3 ml-0.5" />
-                      </button>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-            </AnimatePresence>
-
-            {hasMoreInsights && (
-              <button
-                onClick={() => setShowAllInsights(true)}
-                className="w-full py-1.5 text-[10px] font-medium transition-all flex items-center justify-center gap-1"
-                style={{ color: PRIMARY }}
-              >
-                Show all {insights.length} insights
-                <ChevronDown className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Actions Required — col-span-2 */}
-        <div className="lg:col-span-2 space-y-2.5">
-          {allActions.length > 0 && (
-            <>
-              <div className="flex items-center justify-between">
-                <h2
-                  className="text-xs font-semibold flex items-center gap-1.5"
-                  style={{ color: "hsl(25,40%,18%)" }}
-                >
-                  <ClipboardCheck className="w-3.5 h-3.5" style={{ color: PRIMARY }} />
-                  Actions Required
-                  <span
-                    className="text-[9px] font-medium px-1.5 py-0.5 rounded-full"
-                    style={{ background: PRIMARY_LIGHT, color: PRIMARY }}
-                  >
-                    {allActions.length}
-                  </span>
-                </h2>
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeView + "-actions"}
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="show"
-                  className="space-y-2"
-                >
-                  {displayedActions.map((action) => (
-                    <motion.div
-                      key={action.id}
-                      variants={itemVariants}
-                      className="rounded-2xl p-3 border transition-all"
-                      style={{
-                        background: "rgba(255,255,255,0.7)",
-                        backdropFilter: "blur(16px)",
-                        border: urgencyBorder(action.urgency),
-                        boxShadow: "0 2px 12px rgba(0,0,0,0.03)",
-                      }}
-                    >
-                      <div className="flex items-start gap-2">
-                        <div
-                          className="p-1.5 rounded-lg mt-0.5 flex-shrink-0"
-                          style={urgencyIconStyle(action.urgency)}
-                        >
-                          {action.type === "approval" ? (
-                            <ThumbsUp className="w-3 h-3" />
-                          ) : (
-                            <Eye className="w-3 h-3" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <h3
-                              className="font-semibold text-[12px] leading-tight"
-                              style={{ color: "hsl(25,40%,18%)" }}
-                            >
-                              {action.title}
-                            </h3>
-                            <span
-                              className="text-[7px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"
-                              style={urgencyBadgeStyle(action.urgency)}
-                            >
-                              {action.urgency}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                            <span
-                              className="text-[8px] uppercase tracking-wider font-semibold"
-                              style={{ color: "hsl(25,20%,55%)" }}
-                            >
-                              {action.category}
-                            </span>
-                            <span
-                              className="text-[8px] flex items-center gap-0.5"
-                              style={{ color: "hsl(25,20%,55%)" }}
-                            >
-                              <Clock className="w-2.5 h-2.5" /> {action.dueDate}
-                            </span>
-                            {action.amount && (
-                              <span
-                                className="text-[8px] font-mono font-semibold px-1 py-0.5 rounded"
-                                style={{
-                                  background: "hsl(36,30%,92%)",
-                                  color: "hsl(25,40%,22%)",
-                                }}
-                              >
-                                {action.amount}
-                              </span>
-                            )}
-                          </div>
-                          <p
-                            className="text-[10px] mt-1 leading-relaxed line-clamp-2"
-                            style={{ color: "hsl(25,20%,50%)" }}
-                          >
-                            {action.description}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex gap-1.5 mt-2 ml-8">
-                        {action.type === "approval" ? (
-                          <>
-                            <button
-                              onClick={() =>
-                                setDismissedActions((prev) => new Set(prev).add(action.id))
-                              }
-                              className="px-2 py-0.5 text-[10px] font-medium rounded-lg transition-colors flex items-center gap-1"
-                              style={{
-                                background: `${SUCCESS}18`,
-                                color: SUCCESS,
-                              }}
-                            >
-                              <ThumbsUp className="w-2.5 h-2.5" /> Approve
-                            </button>
-                            <button
-                              onClick={() =>
-                                setDismissedActions((prev) => new Set(prev).add(action.id))
-                              }
-                              className="px-2 py-0.5 text-[10px] font-medium rounded-lg transition-colors flex items-center gap-1"
-                              style={{
-                                background: `${DESTRUCTIVE}15`,
-                                color: DESTRUCTIVE,
-                              }}
-                            >
-                              <ThumbsDown className="w-2.5 h-2.5" /> Reject
-                            </button>
-                          </>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              setDismissedActions((prev) => new Set(prev).add(action.id))
-                            }
-                            className="px-2 py-0.5 text-[10px] font-medium rounded-lg transition-colors flex items-center gap-1"
-                            style={{ background: PRIMARY_LIGHT, color: PRIMARY }}
-                          >
-                            <Eye className="w-2.5 h-2.5" /> Review
-                          </button>
-                        )}
-                      </div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-
-              {hasMoreActions && (
-                <button
-                  onClick={() => setShowAllActions(true)}
-                  className="w-full py-1.5 text-[10px] font-medium rounded-xl border transition-all flex items-center justify-center gap-1"
-                  style={{
-                    color: PRIMARY,
-                    background: "rgba(255,255,255,0.5)",
-                    backdropFilter: "blur(8px)",
-                    borderColor: "hsl(30,15%,85%)",
-                  }}
-                >
-                  Show {allActions.length - 3} more
-                  <ChevronDown className="w-3 h-3" />
-                </button>
-              )}
-            </>
-          )}
         </div>
       </div>
+
+      <AnimatePresence mode="wait">
+        {view === "cmo" ? (
+          <motion.div key="cmo" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}
+            className="p-8 space-y-6">
+
+            {/* KPI Row */}
+            <div className="grid grid-cols-6 gap-4">
+              {cmoKpis.map((kpi, i) => (
+                <motion.div key={kpi.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
+                  className="rounded-xl p-4 flex flex-col gap-2" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: MUTED }}>{kpi.label}</span>
+                    <kpi.icon className="w-3.5 h-3.5" style={{ color: kpi.color }} />
+                  </div>
+                  <div className="text-2xl font-bold" style={{ color: "#3a1f0e" }}>{kpi.value}</div>
+                  <div className="flex items-center gap-1">
+                    {kpi.dir === "up" && <ArrowUpRight className="w-3 h-3" style={{ color: GREEN }} />}
+                    {kpi.dir === "down-good" && <ArrowDownRight className="w-3 h-3" style={{ color: GREEN }} />}
+                    <span className="text-[11px] font-semibold" style={{ color: kpi.dir === "neutral" ? MUTED : GREEN }}>{kpi.delta}</span>
+                  </div>
+                  <span className="text-[10px]" style={{ color: MUTED }}>{kpi.sub}</span>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Row 2: Campaigns + AI Recs */}
+            <div className="grid grid-cols-5 gap-6">
+              {/* Campaign Health */}
+              <div className="col-span-3 rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <div className="flex items-center gap-2">
+                    <Rocket className="w-4 h-4" style={{ color: PRIMARY }} />
+                    <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>Campaign Health</span>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "hsl(36,30%,90%)", color: MUTED }}>23 total</span>
+                  </div>
+                  <a href="/campaigns" className="text-xs font-medium flex items-center gap-1 hover:underline" style={{ color: PRIMARY }}>
+                    View all <ChevronRight className="w-3 h-3" />
+                  </a>
+                </div>
+                <div className="divide-y" style={{ borderColor: BORDER }}>
+                  {campaigns.map((c, i) => {
+                    const s = statusStyle[c.status];
+                    return (
+                      <div key={i} className="flex items-center gap-4 px-5 py-3.5 hover:bg-white/40 transition-colors cursor-pointer"
+                        style={{ borderLeft: `3px solid ${riskBorder[c.risk]}` }}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium truncate" style={{ color: "#3a1f0e" }}>{c.name}</span>
+                            {c.extra && <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "hsl(142,55%,93%)", color: GREEN }}>{c.extra}</span>}
+                          </div>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-[11px]" style={{ color: MUTED }}>{c.budget}</span>
+                            {c.spent > 0 && (
+                              <div className="flex items-center gap-1.5">
+                                <div className="w-20 h-1.5 rounded-full" style={{ background: "hsl(30,15%,87%)" }}>
+                                  <div className="h-1.5 rounded-full" style={{ width: `${c.spent}%`, background: c.spent > 85 ? RED : c.spent > 60 ? AMBER : GREEN }} />
+                                </div>
+                                <span className="text-[10px]" style={{ color: MUTED }}>{c.spent}%</span>
+                              </div>
+                            )}
+                            {c.roas !== "—" && <span className="text-[11px] font-semibold" style={{ color: GREEN }}>ROAS {c.roas}</span>}
+                            {c.ctr !== "—" && <span className="text-[11px]" style={{ color: MUTED }}>CTR {c.ctr}</span>}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex -space-x-1.5">
+                            {c.team.map(t => (
+                              <div key={t} className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-white"
+                                style={{ background: PRIMARY, border: "2px solid white" }}>{t}</div>
+                            ))}
+                          </div>
+                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full" style={{ color: s.color, background: s.bg }}>{s.label}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* AI Recommendations */}
+              <div className="col-span-2 rounded-xl flex flex-col" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                <div className="flex items-center gap-2 px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <Sparkles className="w-4 h-4" style={{ color: PRIMARY }} />
+                  <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>AI Recommendations</span>
+                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: "#fef2f2", color: RED }}>2 critical</span>
+                </div>
+                <div className="flex-1 overflow-y-auto divide-y" style={{ borderColor: BORDER }}>
+                  {aiRecs.map(rec => (
+                    <div key={rec.id} className="p-4 hover:bg-white/50 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <rec.icon className="w-4 h-4 mt-0.5 shrink-0" style={{ color: rec.color }} />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded" style={{ background: `${rec.color}18`, color: rec.color }}>{rec.tag}</span>
+                          </div>
+                          <p className="text-xs font-semibold leading-snug mb-1" style={{ color: "#3a1f0e" }}>{rec.title}</p>
+                          <p className="text-[11px] leading-relaxed mb-2" style={{ color: MUTED }}>{rec.body}</p>
+                          <button onClick={() => setAppliedRecs(s => { const n = new Set(s); n.add(rec.id); return n; })}
+                            className="text-[11px] font-semibold px-3 py-1 rounded-md transition-all"
+                            style={appliedRecs.has(rec.id) ? { background: "hsl(142,55%,93%)", color: GREEN } : { background: PRIMARY, color: "#fff" }}>
+                            {appliedRecs.has(rec.id) ? "✓ Applied" : rec.action}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Funnel + Competitor Alerts + Agents & Budget */}
+            <div className="grid grid-cols-3 gap-6">
+              {/* Marketing Funnel */}
+              <div className="rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                <div className="flex items-center gap-2 px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <BarChart3 className="w-4 h-4" style={{ color: PRIMARY }} />
+                  <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>Marketing Funnel</span>
+                  <span className="ml-auto text-[10px]" style={{ color: MUTED }}>Last 30 days</span>
+                </div>
+                <div className="p-5 space-y-3">
+                  {funnel.map((f, i) => (
+                    <div key={f.stage}>
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs font-medium" style={{ color: "#3a1f0e" }}>{f.stage}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-xs font-semibold" style={{ color: "#3a1f0e" }}>{f.value}</span>
+                          {f.conv && <span className="text-[10px]" style={{ color: GREEN }}>↓ {f.conv}</span>}
+                        </div>
+                      </div>
+                      <div className="h-2 rounded-full" style={{ background: "hsl(30,15%,87%)" }}>
+                        <div className="h-2 rounded-full" style={{ width: `${f.pct}%`, background: `hsl(${25 + i * 12},${62 - i * 3}%,${25 + i * 6}%)` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Competitor Alerts */}
+              <div className="rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                <div className="flex items-center gap-2 px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <AlertTriangle className="w-4 h-4" style={{ color: AMBER }} />
+                  <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>Competitor Alerts</span>
+                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: "#fffbeb", color: AMBER }}>4 new</span>
+                </div>
+                <div className="divide-y" style={{ borderColor: BORDER }}>
+                  {competitorAlerts.map((alert, i) => (
+                    <div key={i} className="px-5 py-3.5">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs font-bold" style={{ color: PRIMARY }}>{alert.competitor}</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold"
+                          style={{ background: alert.severity === "high" ? "#fef2f2" : alert.severity === "medium" ? "#fffbeb" : "hsl(36,30%,90%)", color: alert.severity === "high" ? RED : alert.severity === "medium" ? AMBER : MUTED }}>
+                          {alert.severity}
+                        </span>
+                        <span className="ml-auto text-[10px]" style={{ color: MUTED }}>{alert.time}</span>
+                      </div>
+                      <p className="text-[11px] leading-relaxed" style={{ color: "#3a1f0e" }}>{alert.alert}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-5 py-3" style={{ borderTop: `1px solid ${BORDER}` }}>
+                  <a href="/intelligence" className="text-xs font-medium flex items-center gap-1 hover:underline" style={{ color: PRIMARY }}>
+                    Open Intel Center <ChevronRight className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
+
+              {/* Agents + Budget */}
+              <div className="space-y-4">
+                <div className="rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                  <div className="flex items-center gap-2 px-5 py-3.5" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <Brain className="w-4 h-4" style={{ color: PRIMARY }} />
+                    <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>Active Agents</span>
+                    <span className="ml-auto flex items-center gap-1 text-[10px] font-semibold" style={{ color: GREEN }}>
+                      <Circle className="w-2 h-2 fill-current animate-pulse" /> 6 running
+                    </span>
+                  </div>
+                  <div className="px-5 py-3 space-y-3">
+                    {[
+                      { name: "CMO Strategy Agent", task: "Analyzing Q3 opportunities…", prog: 68 },
+                      { name: "SEO Research Agent", task: "Auditing 847 keywords…", prog: 43 },
+                      { name: "Competitor Monitor", task: "Tracking HubSpot AI Hub…", prog: 91 },
+                      { name: "Budget Optimizer", task: "Rebalancing EMEA spend…", prog: 27 },
+                    ].map(agent => (
+                      <div key={agent.name}>
+                        <div className="flex justify-between mb-0.5">
+                          <span className="text-[11px] font-semibold" style={{ color: "#3a1f0e" }}>{agent.name}</span>
+                          <span className="text-[10px]" style={{ color: MUTED }}>{agent.prog}%</span>
+                        </div>
+                        <p className="text-[10px] mb-1" style={{ color: MUTED }}>{agent.task}</p>
+                        <div className="h-1 rounded-full" style={{ background: "hsl(30,15%,87%)" }}>
+                          <div className="h-1 rounded-full" style={{ width: `${agent.prog}%`, background: PRIMARY }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                  <div className="flex items-center gap-2 px-5 py-3.5" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                    <DollarSign className="w-4 h-4" style={{ color: PRIMARY }} />
+                    <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>Q2 Budget Burn</span>
+                  </div>
+                  <div className="px-5 py-4 space-y-3">
+                    {[
+                      { ch: "Paid Social", pct: 78, spend: "$840K" },
+                      { ch: "Google Ads", pct: 62, spend: "$480K" },
+                      { ch: "Content", pct: 54, spend: "$210K" },
+                      { ch: "Events", pct: 45, spend: "$310K" },
+                      { ch: "SEO / Tools", pct: 38, spend: "$160K" },
+                    ].map(ch => (
+                      <div key={ch.ch}>
+                        <div className="flex justify-between mb-1">
+                          <span className="text-[11px]" style={{ color: "#3a1f0e" }}>{ch.ch}</span>
+                          <span className="text-[11px] font-semibold" style={{ color: MUTED }}>{ch.spend} · {ch.pct}%</span>
+                        </div>
+                        <div className="h-1.5 rounded-full" style={{ background: "hsl(30,15%,87%)" }}>
+                          <div className="h-1.5 rounded-full" style={{ width: `${ch.pct}%`, background: ch.pct > 75 ? AMBER : PRIMARY }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          /* MARKETER VIEW */
+          <motion.div key="marketer" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}
+            className="p-8 space-y-6">
+            <div className="grid grid-cols-4 gap-4">
+              {[
+                { label: "My Tasks Today", value: "12", sub: "3 overdue", icon: CheckCircle2, color: RED },
+                { label: "Pending Approvals", value: "5", sub: "2 urgent", icon: Clock, color: AMBER },
+                { label: "In Publishing Queue", value: "8", sub: "4 scheduled today", icon: Globe, color: BLUE },
+                { label: "Campaigns Active", value: "4", sub: "assigned to me", icon: Rocket, color: GREEN },
+              ].map((kpi, i) => (
+                <motion.div key={kpi.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+                  className="rounded-xl p-5 flex items-start gap-4" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                  <div className="p-2.5 rounded-lg" style={{ background: `${kpi.color}18` }}>
+                    <kpi.icon className="w-5 h-5" style={{ color: kpi.color }} />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold" style={{ color: "#3a1f0e" }}>{kpi.value}</div>
+                    <div className="text-xs font-medium" style={{ color: "#3a1f0e" }}>{kpi.label}</div>
+                    <div className="text-[11px]" style={{ color: MUTED }}>{kpi.sub}</div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <div className="grid grid-cols-3 gap-6">
+              {/* My Tasks */}
+              <div className="rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                <div className="flex items-center gap-2 px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <CheckCircle2 className="w-4 h-4" style={{ color: PRIMARY }} />
+                  <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>My Tasks</span>
+                  <span className="ml-auto text-xs px-2 py-0.5 rounded-full font-semibold" style={{ background: "#fef2f2", color: RED }}>3 overdue</span>
+                </div>
+                <div className="divide-y" style={{ borderColor: BORDER }}>
+                  {myTasks.map((task, i) => (
+                    <div key={i} className="px-5 py-3.5 hover:bg-white/50 transition-colors cursor-pointer">
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 w-4 h-4 rounded border-2 shrink-0" style={{ borderColor: BORDER }} />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium leading-snug" style={{ color: "#3a1f0e" }}>{task.title}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px]" style={{ color: task.priority === "high" ? RED : MUTED }}>{task.due}</span>
+                            <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "hsl(36,30%,90%)", color: MUTED }}>{task.campaign}</span>
+                          </div>
+                        </div>
+                        <span className="w-2 h-2 rounded-full mt-1.5 shrink-0" style={{ background: task.priority === "high" ? RED : task.priority === "medium" ? AMBER : GREEN }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Pending Approvals */}
+              <div className="rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                <div className="flex items-center gap-2 px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <Shield className="w-4 h-4" style={{ color: PRIMARY }} />
+                  <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>Pending Approvals</span>
+                </div>
+                <div className="divide-y" style={{ borderColor: BORDER }}>
+                  {pendingApprovals.map((item, i) => (
+                    <div key={i} className="px-5 py-4">
+                      <p className="text-xs font-medium" style={{ color: "#3a1f0e" }}>{item.title}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "hsl(36,30%,90%)", color: MUTED }}>{item.type}</span>
+                        <span className="text-[10px]" style={{ color: MUTED }}>by {item.requestor} · {item.time}</span>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <button className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold text-white" style={{ background: GREEN }}>Approve</button>
+                        <button className="flex-1 py-1.5 rounded-lg text-[11px] font-semibold" style={{ background: "hsl(36,30%,90%)", color: MUTED }}>Review</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {/* Publishing Queue */}
+              <div className="rounded-xl" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+                <div className="flex items-center gap-2 px-5 py-4" style={{ borderBottom: `1px solid ${BORDER}` }}>
+                  <Globe className="w-4 h-4" style={{ color: PRIMARY }} />
+                  <span className="text-sm font-semibold" style={{ color: "#3a1f0e" }}>Publishing Queue</span>
+                </div>
+                <div className="divide-y" style={{ borderColor: BORDER }}>
+                  {publishQueue.map((item, i) => (
+                    <div key={i} className="px-5 py-3.5 hover:bg-white/50 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium truncate" style={{ color: "#3a1f0e" }}>{item.title}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-semibold" style={{ color: PRIMARY }}>{item.platform}</span>
+                            <span className="text-[10px]" style={{ color: MUTED }}>{item.time}</span>
+                          </div>
+                        </div>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
+                          style={{
+                            background: item.status === "scheduled" ? "#eff6ff" : item.status === "approved" ? "hsl(142,55%,93%)" : "hsl(36,30%,90%)",
+                            color: item.status === "scheduled" ? BLUE : item.status === "approved" ? GREEN : MUTED,
+                          }}>{item.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="px-5 py-3" style={{ borderTop: `1px solid ${BORDER}` }}>
+                  <button className="w-full py-2 rounded-lg text-xs font-semibold text-white hover:opacity-90 transition-all" style={{ background: PRIMARY }}>
+                    + Schedule New Post
+                  </button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

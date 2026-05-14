@@ -4,78 +4,50 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
-  Home, Bot, PenTool, BookOpen, FileText, Globe, Megaphone,
-  Mail, Target, Video, Lightbulb, Search, BarChart2, Link2, Zap,
-  Briefcase, Brain,
-  Plug, GitBranch, Inbox, Play, Shield, ClipboardList,
-  Sparkles, Network,
-  Building2, Library, Cpu, Users, CircleDot
+  Home, Rocket, PenTool, Brain, BarChart3, GitBranch,
+  Users, Sparkles, Building2, Inbox, CircleDot, Command,
+  TrendingUp, Zap,
 } from "lucide-react";
 
-// Top-level nav items (no section header — always visible)
-const topItems = [
-  { label: "Home", href: "/", icon: Home },
-  { label: "LLM Wiki", href: "/llm-wiki", icon: Brain },
-  { label: "Decision Inbox", href: "/observe/decision-inbox", icon: Inbox },
-];
+const PRIMARY = "hsl(25,62%,25%)";
+const MUTED = "hsl(25,20%,50%)";
 
-// Sectioned nav (CMO Office context)
+const homeItem = { label: "Home", href: "/", icon: Home };
+
 const navSections = [
   {
-    label: "ACQUIRE",
+    label: "COMMAND CENTER",
     items: [
-      { label: "Blog Writer", href: "/content/blog", icon: PenTool },
-      { label: "Playbooks", href: "/content/playbooks", icon: BookOpen },
-      { label: "Case Studies", href: "/content/case-studies", icon: FileText },
-      { label: "Page Builder", href: "/content/pages", icon: Globe },
-      { label: "PR Agent", href: "/content/pr", icon: Megaphone },
+      { label: "Campaigns", href: "/campaigns", icon: Rocket },
+      { label: "Content Studio", href: "/content-studio", icon: PenTool },
     ],
   },
   {
-    label: "ENGAGE",
+    label: "INTELLIGENCE",
     items: [
-      { label: "Social Media", href: "/social-media", icon: Network },
-      { label: "Influencer Hub", href: "/growth/influencer", icon: Users },
-      { label: "Webinars", href: "/growth/webinars", icon: Video },
-      { label: "Events", href: "/events", icon: Video },
-      { label: "Brand Design", href: "/brand-design", icon: Cpu },
+      { label: "Intel Center", href: "/intelligence", icon: Brain },
+      { label: "Analytics", href: "/analytics", icon: BarChart3 },
     ],
   },
   {
-    label: "GROW",
+    label: "OPERATIONS",
     items: [
-      { label: "ABM Email", href: "/growth/abm", icon: Mail },
-      { label: "Outbound", href: "/growth/outbound", icon: Target },
-      { label: "Viral Ideas", href: "/growth/viral", icon: Lightbulb },
-      { label: "Partnerships", href: "/partnerships", icon: Building2 },
+      { label: "Workflows", href: "/workflows", icon: GitBranch },
+      { label: "Team & Ops", href: "/team", icon: Users },
     ],
   },
   {
-    label: "MEASURE",
+    label: "SYSTEM",
     items: [
-      { label: "SEO / AEO / GEO", href: "/seo", icon: Search },
-      { label: "Paid Ads", href: "/performance-marketing", icon: BarChart2 },
-      { label: "Backlinks", href: "/seo/backlinks", icon: Link2 },
-      { label: "Keywords", href: "/seo/keywords", icon: Zap },
-    ],
-  },
-  {
-    label: "OPERATE",
-    items: [
-      { label: "Chief of Staff", href: "/chief-of-staff", icon: Briefcase },
-      { label: "Agent Studio", href: "/build/agent-studio", icon: Bot },
-      { label: "Skills", href: "/build/skills", icon: Sparkles },
-      { label: "Knowledge Base", href: "/build/knowledge-base", icon: Library },
-      { label: "Integrations", href: "/build/integrations", icon: Plug },
-      { label: "Skill Flows", href: "/build/skill-flows", icon: GitBranch },
+      { label: "Brand Brain", href: "/brand-brain", icon: Sparkles },
+      { label: "Agency Mode", href: "/agency", icon: Building2 },
     ],
   },
   {
     label: "OBSERVE",
     items: [
-      { label: "Agent Runs", href: "/observe/agent-runs", icon: Play },
-      { label: "Compliance", href: "/observe/compliance", icon: Shield },
-      { label: "Audit Trail", href: "/observe/audit-trail", icon: ClipboardList },
+      { label: "LLM Wiki", href: "/llm-wiki", icon: Brain },
+      { label: "Decision Inbox", href: "/observe/decision-inbox", icon: Inbox },
     ],
   },
 ];
@@ -97,74 +69,75 @@ export function Sidebar() {
         boxShadow: "4px 0 30px #673f1b08",
       }}
     >
-      {/* ── Brand header ── */}
-      <div className="h-16 flex items-center px-5" style={{ borderBottom: "1px solid #673f1b1a" }}>
+      {/* Brand header */}
+      <div className="h-16 flex items-center px-5 gap-3" style={{ borderBottom: "1px solid #673f1b1a" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/lyzr-logo.png"
-          alt="Lyzr"
-          style={{ height: 26, width: "auto", objectFit: "contain" }}
-        />
-        <div className="ml-3">
-          <p className="text-[13px] font-semibold leading-tight" style={{ color: "#3a1f0e" }}>
-            CMO Office
-          </p>
-          <p
-            className="text-[9px] font-bold uppercase tracking-[0.14em]"
-            style={{ color: "hsl(25,20%,55%)" }}
-          >
-            AgenticOS
-          </p>
+        <img src="/lyzr-logo.png" alt="Lyzr" style={{ height: 26, width: "auto", objectFit: "contain" }} />
+        <div>
+          <p className="text-[13px] font-semibold leading-tight" style={{ color: "#3a1f0e" }}>CMO Office</p>
+          <p className="text-[9px] font-bold uppercase tracking-[0.14em]" style={{ color: MUTED }}>AgenticOS</p>
         </div>
       </div>
 
-      {/* ── Nav ── */}
-      <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
-        {/* Top-level items (Home / LLM Wiki / Decision Inbox) */}
-        {topItems.map(item => {
-          const active = isActive(item.href);
-          return (
-            <NavLink key={item.href} item={item} active={active} />
-          );
-        })}
+      {/* CMD+K trigger */}
+      <div className="px-3 pt-3 pb-1">
+        <button
+          id="cmd-palette-trigger"
+          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all"
+          style={{
+            background: "rgba(255,255,255,0.5)",
+            border: "1px solid #673f1b20",
+            color: MUTED,
+          }}
+          onClick={() => document.dispatchEvent(new CustomEvent("open-cmd-palette"))}
+        >
+          <Command className="w-3.5 h-3.5" />
+          <span className="flex-1 text-left">Search or run action…</span>
+          <kbd className="text-[9px] font-mono px-1.5 py-0.5 rounded" style={{ background: "#673f1b15" }}>⌘K</kbd>
+        </button>
+      </div>
+
+      {/* Nav */}
+      <nav className="flex-1 overflow-y-auto py-2 px-3 space-y-0.5">
+        {/* Home */}
+        <NavLink item={homeItem} active={isActive(homeItem.href)} />
 
         {/* Sectioned items */}
         {navSections.map(section => (
-          <div key={section.label}>
-            <div className="pt-3 pb-1 px-3">
-              <span
-                className="text-[9px] font-bold uppercase tracking-[0.15em]"
-                style={{ color: "hsl(25,20%,55%)" }}
-              >
+          <div key={section.label} className="pt-2">
+            <div className="pt-1 pb-1 px-3">
+              <span className="text-[9px] font-bold uppercase tracking-[0.15em]" style={{ color: MUTED }}>
                 {section.label}
               </span>
             </div>
-            {section.items.map(item => {
-              const active = isActive(item.href);
-              return <NavLink key={item.href} item={item} active={active} />;
-            })}
+            {section.items.map(item => (
+              <NavLink key={item.href} item={item} active={isActive(item.href)} />
+            ))}
           </div>
         ))}
       </nav>
 
-      {/* ── Footer ── */}
+      {/* Footer */}
       <div className="p-4" style={{ borderTop: "1px solid #673f1b1a" }}>
+        {/* Active agents indicator */}
+        <div className="mb-2 px-2 py-1.5 rounded-lg flex items-center gap-2"
+          style={{ background: "hsl(142,55%,96%)", border: "1px solid hsl(142,55%,80%)" }}>
+          <Zap className="w-3 h-3" style={{ color: "hsl(142,55%,35%)" }} />
+          <span className="text-[10px] font-semibold" style={{ color: "hsl(142,45%,28%)" }}>6 Agents Running</span>
+          <span className="ml-auto flex gap-0.5">
+            {[...Array(3)].map((_, i) => (
+              <span key={i} className="w-1 h-1 rounded-full animate-pulse" style={{ background: "hsl(142,55%,35%)", animationDelay: `${i * 200}ms` }} />
+            ))}
+          </span>
+        </div>
         <div
           className="flex items-center gap-3 px-2 py-2 rounded-xl"
-          style={{
-            background: "#f8f2e999",
-            border: "1px solid #673f1b1a",
-            backdropFilter: "blur(16px)",
-          }}
+          style={{ background: "#f8f2e999", border: "1px solid #673f1b1a" }}
         >
           <CircleDot className="w-4 h-4 animate-pulse" style={{ color: "hsl(142,55%,35%)" }} />
           <div className="flex flex-col flex-1 min-w-0">
-            <span className="text-xs font-medium truncate" style={{ color: "#3a1f0e" }}>
-              Agent Active
-            </span>
-            <span className="text-[10px]" style={{ color: "hsl(25,20%,50%)" }}>
-              Powered by Lyzr AgenticOS
-            </span>
+            <span className="text-xs font-medium truncate" style={{ color: "#3a1f0e" }}>System Online</span>
+            <span className="text-[10px]" style={{ color: MUTED }}>Powered by Lyzr AgenticOS</span>
           </div>
         </div>
       </div>
@@ -178,18 +151,13 @@ function NavLink({ item, active }: { item: { label: string; href: string; icon: 
     <Link
       href={item.href}
       className={cn(
-        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 group border border-transparent",
+        "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 border border-transparent",
         active
           ? "bg-black text-white shadow-md"
           : "text-[#5a3a25] hover:bg-white/50 hover:text-[#3a1f0e]"
       )}
     >
-      <Icon
-        className={cn(
-          "w-4 h-4 transition-colors shrink-0",
-          active ? "text-white" : "text-[#8a6a55] group-hover:text-[#3a1f0e]"
-        )}
-      />
+      <Icon className={cn("w-4 h-4 shrink-0 transition-colors", active ? "text-white" : "text-[#8a6a55]")} />
       {item.label}
     </Link>
   );
