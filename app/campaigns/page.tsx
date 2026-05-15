@@ -26,49 +26,55 @@ const DARK_TEXT  = "#3a1f0e";
 
 // ─── KPI Data ────────────────────────────────────────────────────────────────
 const kpis = [
-  { label: "Active Campaigns", value: "23", sub: "8 live right now", icon: Rocket, color: PRIMARY, delta: "+3", dir: "up" },
-  { label: "Total Budget",     value: "$3.2M", sub: "Q2 allocation",     icon: DollarSign, color: BLUE, delta: "+$400K", dir: "up" },
-  { label: "Blended ROAS",    value: "4.2×",  sub: "target: 3.5×",      icon: TrendingUp, color: GREEN, delta: "+0.8×", dir: "up" },
-  { label: "Pipeline Generated", value: "$12.8M", sub: "vs $10.3M last Q", icon: BarChart3, color: AMBER, delta: "+24.1%", dir: "up" },
+  { label: "Active Campaigns", value: "23", sub: "7 live right now", icon: Rocket, color: PRIMARY, delta: "+3", dir: "up" },
+  { label: "Total Budget",     value: "$4.2M", sub: "Q2 allocation",    icon: DollarSign, color: BLUE, delta: "+$1M", dir: "up" },
+  { label: "Blended ROAS",    value: "4.2×",  sub: "target: 3.5×",     icon: TrendingUp, color: GREEN, delta: "+0.3×", dir: "up" },
+  { label: "Pipeline Generated", value: "$6.2M", sub: "vs $5.7M last Q", icon: BarChart3, color: AMBER, delta: "+8%", dir: "up" },
 ];
 
 // ─── Campaign Data ────────────────────────────────────────────────────────────
 const campaigns = [
   {
-    id: 1, name: "Q2 Enterprise Launch", status: "live", risk: "low",
-    budget: "$450K", spent: 72, ctr: "3.2%", roas: "5.1×", cac: "$292",
-    team: ["SM", "AK", "RB"], milestone: "Jun 15 — Mid-sprint review",
-    mqls: 148, revenue: "$2.3M", aiFlag: null,
+    id: 1, name: "BFSI Vertical Launch", status: "live", risk: "high",
+    budget: "$180K", spent: 68, ctr: "3.4%", roas: "3.4×", cac: "$312",
+    team: ["EW", "PS"], milestone: "May 15 — Launch day",
+    mqls: 87, revenue: "$612K", aiFlag: "3 assets pending — launch tomorrow",
   },
   {
-    id: 2, name: "EMEA Expansion Wave", status: "at-risk", risk: "high",
-    budget: "$280K", spent: 58, ctr: "1.8%", roas: "2.4×", cac: "$421",
-    team: ["JL", "PK"], milestone: "Jun 8 — Budget review",
-    mqls: 42, revenue: "$672K", aiFlag: "Underperforming — ROAS below 3× threshold",
+    id: 2, name: "OGI Whitepaper Campaign", status: "at-risk", risk: "medium",
+    budget: "$45K", spent: 62, ctr: "2.1%", roas: "2.8×", cac: "$380",
+    team: ["EW"], milestone: "May 20 — Delivery deadline",
+    mqls: 34, revenue: "$252K", aiFlag: "Behind schedule by 2 days",
   },
   {
-    id: 3, name: "LinkedIn ABM Enterprise", status: "live", risk: "low",
-    budget: "$85K", spent: 44, ctr: "4.7%", roas: "6.8×", cac: "$198",
-    team: ["SM", "MR"], milestone: "Jun 20 — Q3 scale decision",
-    mqls: 67, revenue: "$910K", aiFlag: null,
+    id: 3, name: "AWS Partnership Announcement", status: "live", risk: "low",
+    budget: "$28K", spent: 55, ctr: "3.1%", roas: "4.2×", cac: "$248",
+    team: ["RP"], milestone: "May 18 — PR amplification",
+    mqls: 41, revenue: "$343K", aiFlag: null,
   },
   {
-    id: 4, name: "AI Tools Webinar Series", status: "live", risk: "low",
-    budget: "$45K", spent: 81, ctr: "—", roas: "—", cac: "$36",
-    team: ["AK"], milestone: "Jun 12 — Next webinar live",
-    mqls: 94, revenue: "$—", extra: "1,247 registrations", aiFlag: null,
+    id: 4, name: "Hitachi Case Study Promotion", status: "live", risk: "low",
+    budget: "$32K", spent: 44, ctr: "2.7%", roas: "1.9×", cac: "$290",
+    team: ["DK"], milestone: "Jun 1 — Campaign review",
+    mqls: 28, revenue: "$168K", aiFlag: null,
   },
   {
-    id: 5, name: "Product Update Awareness", status: "scheduled", risk: "low",
-    budget: "$120K", spent: 0, ctr: "—", roas: "—", cac: "—",
-    team: ["RB", "JL"], milestone: "Jun 3 — Launch date",
-    mqls: 0, revenue: "$—", extra: "Launches Jun 3", aiFlag: null,
+    id: 5, name: "Series A PR Campaign", status: "paused", risk: "low",
+    budget: "$15K", spent: 100, ctr: "4.8%", roas: "8.5×", cac: "$88",
+    team: ["JT"], milestone: "Complete — May 1",
+    mqls: 62, revenue: "$382K", extra: "ROI 850% — complete", aiFlag: null,
   },
   {
-    id: 6, name: "G2 Review Push", status: "paused", risk: "medium",
-    budget: "$32K", spent: 91, ctr: "2.1%", roas: "3.8×", cac: "$310",
-    team: ["MR"], milestone: "Jun 1 — Resume decision",
-    mqls: 22, revenue: "$314K", aiFlag: null,
+    id: 6, name: "LinkedIn ABM — Enterprise", status: "live", risk: "low",
+    budget: "$98K", spent: 44, ctr: "4.7%", roas: "4.8×", cac: "$198",
+    team: ["PS"], milestone: "Jun 20 — Q3 scale decision",
+    mqls: 79, revenue: "$946K", aiFlag: null,
+  },
+  {
+    id: 7, name: "Agentic OS Launch (APAC)", status: "scheduled", risk: "low",
+    budget: "$62K", spent: 0, ctr: "—", roas: "—", cac: "—",
+    team: ["AR"], milestone: "Jun 10 — Launch date",
+    mqls: 0, revenue: "$—", extra: "Planning phase", aiFlag: null,
   },
 ];
 
@@ -102,12 +108,13 @@ const channels = [
 
 // ─── Analytics Table Data ────────────────────────────────────────────────────
 const analyticsRows = [
-  { name: "Q2 Enterprise Launch",    status: "live",      spend: "$324K", roas: "5.1×", ctr: "3.2%", cac: "$292", mqls: 148, revenue: "$2.3M"  },
-  { name: "EMEA Expansion Wave",     status: "at-risk",   spend: "$162K", roas: "2.4×", ctr: "1.8%", cac: "$421", mqls: 42,  revenue: "$672K"  },
-  { name: "LinkedIn ABM Enterprise", status: "live",      spend: "$37K",  roas: "6.8×", ctr: "4.7%", cac: "$198", mqls: 67,  revenue: "$910K"  },
-  { name: "AI Tools Webinar Series", status: "live",      spend: "$36K",  roas: "—",    ctr: "—",    cac: "$36",  mqls: 94,  revenue: "—"      },
-  { name: "Product Update Awareness",status: "scheduled", spend: "$0",    roas: "—",    ctr: "—",    cac: "—",    mqls: 0,   revenue: "—"      },
-  { name: "G2 Review Push",          status: "paused",    spend: "$29K",  roas: "3.8×", ctr: "2.1%", cac: "$310", mqls: 22,  revenue: "$314K"  },
+  { name: "BFSI Vertical Launch",         status: "live",      spend: "$122K", roas: "3.4×", ctr: "3.4%", cac: "$312", mqls: 87,  revenue: "$612K"  },
+  { name: "OGI Whitepaper Campaign",      status: "at-risk",   spend: "$28K",  roas: "2.8×", ctr: "2.1%", cac: "$380", mqls: 34,  revenue: "$252K"  },
+  { name: "AWS Partnership Announcement", status: "live",      spend: "$15K",  roas: "4.2×", ctr: "3.1%", cac: "$248", mqls: 41,  revenue: "$343K"  },
+  { name: "Hitachi Case Study Promotion", status: "live",      spend: "$14K",  roas: "1.9×", ctr: "2.7%", cac: "$290", mqls: 28,  revenue: "$168K"  },
+  { name: "Series A PR Campaign",         status: "paused",    spend: "$15K",  roas: "8.5×", ctr: "4.8%", cac: "$88",  mqls: 62,  revenue: "$382K"  },
+  { name: "LinkedIn ABM — Enterprise",    status: "live",      spend: "$43K",  roas: "4.8×", ctr: "4.7%", cac: "$198", mqls: 79,  revenue: "$946K"  },
+  { name: "Agentic OS Launch (APAC)",     status: "scheduled", spend: "$0",    roas: "—",    ctr: "—",    cac: "—",    mqls: 0,   revenue: "—"      },
 ];
 
 // ─── ROAS trend SVG polyline points (3-month, scaled to 100×40) ──────────────
@@ -446,17 +453,178 @@ function AISidebar() {
   );
 }
 
+// ─── Kanban column groupings ──────────────────────────────────────────────────
+const kanbanStatusMap: Record<string, string[]> = {
+  Planning:  ["scheduled"],
+  Active:    ["live"],
+  Paused:    ["paused"],
+  Complete:  ["complete"],
+};
+
+// ─── Gantt / Calendar helpers ─────────────────────────────────────────────────
+const ganttItems = [
+  { name: "BFSI Vertical Launch",         start: 0,  width: 45, color: RED    },
+  { name: "OGI Whitepaper Campaign",       start: 10, width: 35, color: AMBER  },
+  { name: "AWS Partnership Announcement",  start: 5,  width: 30, color: GREEN  },
+  { name: "Hitachi Case Study Promotion",  start: 15, width: 50, color: BLUE   },
+  { name: "Series A PR Campaign",          start: 0,  width: 20, color: MUTED  },
+  { name: "LinkedIn ABM — Enterprise",     start: 8,  width: 60, color: GREEN  },
+  { name: "Agentic OS Launch (APAC)",      start: 40, width: 35, color: PRIMARY },
+];
+
+const calendarDots: Record<number, { name: string; color: string }[]> = {
+  14: [{ name: "BFSI Launch", color: RED }],
+  15: [{ name: "BFSI Launch", color: RED }, { name: "AWS PR", color: GREEN }],
+  18: [{ name: "AWS PR Amplification", color: GREEN }],
+  20: [{ name: "OGI Deadline", color: AMBER }],
+  25: [{ name: "LinkedIn ABM Review", color: BLUE }],
+};
+
 // ─── Tab: Overview ────────────────────────────────────────────────────────────
 function OverviewTab() {
+  const [viewMode, setViewMode] = useState<"List" | "Kanban" | "Gantt" | "Calendar">("List");
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-        {campaigns.map((c, i) => (
-          <motion.div key={c.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-            <CampaignCard c={c} />
-          </motion.div>
+      {/* View toggle */}
+      <div style={{ display: "flex", gap: 4, marginBottom: 20, background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 4, width: "fit-content" }}>
+        {(["List", "Kanban", "Gantt", "Calendar"] as const).map(mode => (
+          <button
+            key={mode}
+            onClick={() => setViewMode(mode)}
+            style={{
+              padding: "6px 14px", borderRadius: 7, fontSize: 12, fontWeight: 600,
+              cursor: "pointer", border: "none", transition: "all 0.18s",
+              background: viewMode === mode ? PRIMARY : "transparent",
+              color: viewMode === mode ? "#fff" : MUTED,
+            }}
+          >
+            {mode}
+          </button>
         ))}
       </div>
+
+      {/* List view */}
+      {viewMode === "List" && (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
+          {campaigns.map((c, i) => (
+            <motion.div key={c.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
+              <CampaignCard c={c} />
+            </motion.div>
+          ))}
+        </div>
+      )}
+
+      {/* Kanban view */}
+      {viewMode === "Kanban" && (
+        <div style={{ display: "flex", gap: 16, overflowX: "auto" }}>
+          {Object.entries(kanbanStatusMap).map(([col, statuses]) => {
+            const colCampaigns = campaigns.filter(c => statuses.includes(c.status));
+            return (
+              <div key={col} style={{ minWidth: 260, flex: "0 0 260px" }}>
+                <div style={{
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
+                  marginBottom: 12, padding: "6px 10px", borderRadius: 8,
+                  background: col === "Active" ? `${GREEN}10` : col === "Planning" ? `${BLUE}10` : col === "Paused" ? `${AMBER}10` : `${MUTED}10`,
+                }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT }}>{col}</span>
+                  <span style={{
+                    fontSize: 10, fontWeight: 700, padding: "1px 8px", borderRadius: 10,
+                    background: PRIMARY, color: "#fff",
+                  }}>{colCampaigns.length}</span>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {colCampaigns.map((c, i) => (
+                    <motion.div key={c.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
+                      <CampaignCard c={c} />
+                    </motion.div>
+                  ))}
+                  {colCampaigns.length === 0 && (
+                    <div style={{ border: `1.5px dashed ${BORDER}`, borderRadius: 10, padding: 24, textAlign: "center", fontSize: 12, color: MUTED }}>
+                      No campaigns
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Gantt view */}
+      {viewMode === "Gantt" && (
+        <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: DARK_TEXT, marginBottom: 16 }}>Campaign Timeline — May / June 2025</div>
+          {/* Header ruler */}
+          <div style={{ display: "flex", marginBottom: 8, marginLeft: 200 }}>
+            {["May 1", "May 8", "May 15", "May 22", "May 29", "Jun 5", "Jun 12"].map((lbl, i) => (
+              <div key={lbl} style={{ flex: 1, fontSize: 10, color: MUTED, borderLeft: `1px dashed ${BORDER}`, paddingLeft: 4 }}>{lbl}</div>
+            ))}
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {ganttItems.map((item, i) => (
+              <motion.div key={item.name} initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
+                style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 196, fontSize: 11, color: DARK_TEXT, fontWeight: 600, textAlign: "right", flexShrink: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {item.name}
+                </div>
+                <div style={{ flex: 1, position: "relative", height: 24, background: BORDER, borderRadius: 6, overflow: "hidden" }}>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${item.width}%` }}
+                    transition={{ duration: 0.7, ease: "easeOut", delay: i * 0.06 }}
+                    style={{
+                      position: "absolute", left: `${item.start}%`,
+                      height: "100%", borderRadius: 6,
+                      background: item.color, opacity: 0.8,
+                    }}
+                  />
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Calendar view */}
+      {viewMode === "Calendar" && (
+        <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: DARK_TEXT, marginBottom: 16 }}>May 2025</div>
+          {/* Day labels */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginBottom: 4 }}>
+            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(d => (
+              <div key={d} style={{ textAlign: "center", fontSize: 10, fontWeight: 700, color: MUTED, padding: "4px 0" }}>{d}</div>
+            ))}
+          </div>
+          {/* Calendar grid — May 2025 starts on Thursday (index 4) */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
+            {Array.from({ length: 4 }).map((_, i) => <div key={`empty-${i}`} />)}
+            {Array.from({ length: 31 }).map((_, idx) => {
+              const day = idx + 1;
+              const dots = calendarDots[day] || [];
+              const isToday = day === 14;
+              return (
+                <motion.div key={day} whileHover={{ scale: 1.05 }}
+                  style={{
+                    minHeight: 56, borderRadius: 8, padding: "6px 8px",
+                    background: isToday ? `${PRIMARY}15` : PAGE_BG,
+                    border: `1px solid ${isToday ? PRIMARY : BORDER}`,
+                    cursor: "pointer",
+                  }}>
+                  <div style={{ fontSize: 11, fontWeight: isToday ? 800 : 600, color: isToday ? PRIMARY : DARK_TEXT, marginBottom: 4 }}>{day}</div>
+                  {dots.map((dot, di) => (
+                    <div key={di} style={{
+                      fontSize: 9, color: "#fff", background: dot.color,
+                      borderRadius: 4, padding: "1px 5px", marginBottom: 2,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>{dot.name}</div>
+                  ))}
+                </motion.div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }
@@ -481,7 +649,7 @@ function PlannerTab() {
         <div style={{ marginBottom: 16 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 6 }}>Campaign Goal</label>
           <textarea
-            defaultValue="Generate 150 MQLs in Q3 from enterprise SaaS companies with 200+ employees via LinkedIn ABM and Google Search"
+            defaultValue="Generate 200 MQLs in Q3 from BFSI enterprise accounts (banks, insurance) for Lyzr AgenticOS via LinkedIn ABM and Thought Leadership"
             style={{
               width: "100%", height: 80, background: PAGE_BG, border: `1px solid ${BORDER}`,
               borderRadius: 8, padding: "8px 12px", fontSize: 12, color: DARK_TEXT,
@@ -498,9 +666,9 @@ function PlannerTab() {
               borderRadius: 8, padding: "8px 12px", fontSize: 12, color: DARK_TEXT,
               outline: "none", appearance: "none", cursor: "pointer",
             }}>
+              <option>BFSI Enterprise — CISO, CTO, Head of IT (Banks &amp; Insurance)</option>
               <option>Enterprise SaaS (500+ employees)</option>
-              <option>SMB (10–200 employees)</option>
-              <option>Mid-Market (200–500 employees)</option>
+              <option>Mid-Market Technology (200–500 employees)</option>
             </select>
             <ChevronDown size={14} color={MUTED} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
           </div>
@@ -576,8 +744,8 @@ function PlannerTab() {
       <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 24 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 16, color: DARK_TEXT }}>Campaign Strategy: Q3 Enterprise ABM</div>
-            <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>Generated by Campaign Planner Agent</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: DARK_TEXT }}>Campaign Strategy: Lyzr AgenticOS for BFSI</div>
+            <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>Generated by Campaign Planner Agent · Lyzr.ai</div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <div style={{ width: 8, height: 8, borderRadius: "50%", background: GREEN }} />
@@ -588,9 +756,9 @@ function PlannerTab() {
         {/* Goal / Budget / Channels */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 20 }}>
           {[
-            { label: "Goal", value: "150 MQLs in 90 days" },
-            { label: "Budget", value: "$85,000" },
-            { label: "Primary Channel", value: "LinkedIn (60%)" },
+            { label: "Goal", value: "200 MQLs in 90 days" },
+            { label: "Budget", value: "$98,000" },
+            { label: "Primary Channel", value: "LinkedIn ABM (55%)" },
           ].map(s => (
             <div key={s.label} style={{ background: PAGE_BG, borderRadius: 8, padding: "10px 12px" }}>
               <div style={{ fontSize: 10, color: MUTED, marginBottom: 2 }}>{s.label}</div>
@@ -603,9 +771,9 @@ function PlannerTab() {
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 10 }}>Channel Allocation</div>
           {[
-            { ch: "LinkedIn", pct: 60, color: "#0077b5" },
-            { ch: "Google", pct: 25, color: "#4285f4" },
-            { ch: "Email", pct: 15, color: "#059669" },
+            { ch: "LinkedIn ABM", pct: 55, color: "#0077b5" },
+            { ch: "Thought Leadership / Events", pct: 25, color: "#4285f4" },
+            { ch: "Partner Co-marketing (AWS)", pct: 20, color: "#059669" },
           ].map(c => (
             <div key={c.ch} style={{ marginBottom: 8 }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: MUTED, marginBottom: 3 }}>
@@ -620,9 +788,9 @@ function PlannerTab() {
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 10 }}>Messaging Framework</div>
           {[
-            { tag: "Hero", text: '"Scale marketing operations with AI agents"' },
-            { tag: "Pain", text: "Manual workflows costing 40% productivity" },
-            { tag: "Proof", text: "3.4× faster campaign execution (customer data)" },
+            { tag: "Hero", text: '"Deploy AI agents across your BFSI operations with Lyzr AgenticOS"' },
+            { tag: "Pain", text: "Legacy banking workflows costing 60% in operational overhead" },
+            { tag: "Proof", text: "Hitachi deployed Lyzr AgenticOS — 3.4× faster process execution" },
           ].map(m => (
             <div key={m.tag} style={{ display: "flex", gap: 8, marginBottom: 7, alignItems: "flex-start" }}>
               <span style={{ fontSize: 10, fontWeight: 700, background: `${PRIMARY}15`, color: PRIMARY, borderRadius: 5, padding: "2px 6px", flexShrink: 0 }}>{m.tag}</span>
@@ -635,9 +803,9 @@ function PlannerTab() {
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 10 }}>Execution Timeline</div>
           {[
-            { phase: "Week 1–2", desc: "LinkedIn awareness (CPM $18, target: CTOs, VPs)" },
-            { phase: "Week 3–6", desc: "Retargeting + demo offers via Google & LinkedIn" },
-            { phase: "Week 7–12", desc: "Email nurture sequence + SQL handoff to sales" },
+            { phase: "Week 1–2", desc: "LinkedIn ABM awareness — target CISO, CTO, Head of IT at banks & insurers" },
+            { phase: "Week 3–6", desc: "Thought leadership posts + AWS co-marketing events + retargeting" },
+            { phase: "Week 7–12", desc: "Email nurture sequence + OGI whitepaper + SQL handoff to sales" },
           ].map((t, i) => (
             <div key={t.phase} style={{ display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" }}>
               <div style={{ width: 20, height: 20, borderRadius: "50%", background: PRIMARY, color: "#fff", fontSize: 10, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{i + 1}</div>

@@ -603,7 +603,7 @@ function ForecastingTab() {
                 {[
                   "Meta EMEA ROAS dropped from 3.8× to 1.2× — privacy changes reduced audience matching accuracy by 42%",
                   "EMEA market seasonality in Q2 historically shows 15–20% lower intent signal vs APAC/NA",
-                  "New competitor (6sense) launched aggressive EMEA campaign in April — 3× ad volume increase detected",
+                  "Moveworks launched aggressive EMEA campaign in April — 3× ad volume increase detected",
                 ].map((b, i) => (
                   <li key={i} style={{ display: "flex", gap: 8, fontSize: 13, color: DARK_TEXT }}>
                     <span style={{ color: PRIMARY, fontWeight: 700 }}>{i + 1}.</span>{b}
@@ -720,6 +720,80 @@ function ForecastingTab() {
   );
 }
 
+// ─── NL Query Bar ─────────────────────────────────────────────────────────────
+const NL_DEMO_ANSWER =
+  "Based on 90-day attribution data: BFSI Vertical Launch ($1.84M influenced pipeline, 340% ROI) and LinkedIn ABM Enterprise ($2.1M, 480% ROI) were top performers in deals >$100K. Combined, they account for 73% of BFSI segment revenue influenced.";
+
+function NLQueryBar() {
+  const [query, setQuery] = useState("");
+  const [result, setResult] = useState<{ query: string; answer: string } | null>(null);
+
+  const handleRun = () => {
+    if (!query.trim()) return;
+    setResult({ query: query.trim(), answer: NL_DEMO_ANSWER });
+  };
+
+  return (
+    <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: 20, marginBottom: 28 }}>
+      <div className="flex items-center gap-3">
+        <Brain size={20} style={{ color: PRIMARY, flexShrink: 0 }} />
+        <input
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && handleRun()}
+          placeholder="Ask anything... e.g. 'Which campaigns influenced deals >$100K in BFSI?'"
+          style={{
+            flex: 1,
+            border: "none",
+            background: "transparent",
+            fontSize: 14,
+            color: DARK_TEXT,
+            outline: "none",
+          }}
+        />
+        <button
+          onClick={handleRun}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "8px 18px",
+            background: PRIMARY,
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: "pointer",
+            flexShrink: 0,
+          }}
+        >
+          <Send size={14} /> Run Query
+        </button>
+      </div>
+
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${BORDER}` }}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles size={14} style={{ color: PRIMARY }} />
+            <span style={{ fontSize: 12, fontWeight: 700, color: PRIMARY }}>AI Answer</span>
+          </div>
+          <div style={{ fontSize: 12, color: MUTED, marginBottom: 6 }}>
+            Query: <em style={{ color: DARK_TEXT }}>&ldquo;{result.query}&rdquo;</em>
+          </div>
+          <p style={{ fontSize: 13, color: DARK_TEXT, lineHeight: 1.65, margin: 0 }}>
+            {result.answer}
+          </p>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("Executive Dashboard");
@@ -734,6 +808,9 @@ export default function AnalyticsPage() {
         </div>
         <p style={{ fontSize: 14, color: MUTED }}>Revenue attribution, funnel intelligence & marketing forecasting</p>
       </div>
+
+      {/* NL Query Bar — above tabs */}
+      <NLQueryBar />
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 gap-4 mb-8" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))" }}>

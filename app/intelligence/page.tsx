@@ -28,9 +28,11 @@ const TABS: Tab[] = ["Market Intelligence", "Competitor Intelligence", "Customer
 
 // ─── KPI data ─────────────────────────────────────────────────────────────────
 const kpis = [
-  { label: "Competitors Tracked",    value: "12",      icon: Eye,       color: BLUE,    sub: "3 high-threat" },
+  { label: "Lyzr Share of Voice",    value: "18%",     icon: BarChart3, color: PRIMARY, sub: "vs 24% top competitor" },
+  { label: "NPS Score",              value: "42",      icon: ThumbsUp,  color: GREEN,   sub: "Industry avg 38" },
+  { label: "Positive Sentiment",     value: "68%",     icon: Star,      color: AMBER,   sub: "across review platforms" },
+  { label: "Competitors Tracked",    value: "12",      icon: Eye,       color: BLUE,    sub: "4 high-threat AI competitors" },
   { label: "Market Signals Today",   value: "847",     icon: Bell,      color: AMBER,   sub: "+124 vs yesterday" },
-  { label: "Customer Personas",      value: "24",      icon: Users,     color: GREEN,   sub: "6 segments" },
   { label: "Intelligence Reports",   value: "156",     icon: BookOpen,  color: PRIMARY, sub: "this month" },
 ];
 
@@ -68,26 +70,26 @@ const keywords = [
 
 // ─── Competitor Intelligence ───────────────────────────────────────────────────
 const competitors = [
-  { name: "HubSpot", stage: "Public", headcount: "7,400", recentMove: "Launched AI Content Hub — 240+ press mentions", seoTrend: "up", adSpend: "$4.2M/mo", threat: "High" },
-  { name: "Salesforce MC", stage: "Public", headcount: "79,000", recentMove: "Einstein AI expanded to 14 new channels", seoTrend: "up", adSpend: "$12.1M/mo", threat: "High" },
-  { name: "Marketo", stage: "Acquired", headcount: "~2,000", recentMove: "SERP position #2 for 'marketing automation'", seoTrend: "up", adSpend: "$1.8M/mo", threat: "Medium" },
-  { name: "6sense", stage: "Series E", headcount: "1,200", recentMove: "Raised $150M, expanding into EMEA markets", seoTrend: "neutral", adSpend: "$2.4M/mo", threat: "Medium" },
+  { name: "Moveworks", sov: "24%", stage: "Series C", funding: "$200M", headcount: "500", recentMove: "Posted comparison blog vs Lyzr (2 days ago)", seoTrend: "up", strengths: "IT automation, large enterprise", weaknesses: "No marketing focus", threat: "High" },
+  { name: "Adept AI", sov: "15%", stage: "Series B", funding: "$415M", headcount: "200", recentMove: "New product launch announcement (1 week ago)", seoTrend: "up", strengths: "General automation", weaknesses: "Early stage GTM", threat: "High" },
+  { name: "AutoGPT", sov: "12%", stage: "Open Source", funding: "—", headcount: "45 contributors", recentMove: "v0.5 release with new plugins (3 days ago)", seoTrend: "neutral", strengths: "Developer community", weaknesses: "No enterprise support", threat: "Medium" },
+  { name: "LangChain", sov: "9%", stage: "Series A", funding: "$25M", headcount: "120", recentMove: "LangSmith GA announcement (5 days ago)", seoTrend: "up", strengths: "Developer ecosystem", weaknesses: "Complex setup", threat: "Medium" },
 ];
 
 const adLibrary = [
-  { competitor: "HubSpot", campaign: "AI Content Hub", type: "Sponsored", channel: "LinkedIn", variants: 3, spend: "~$180K est.", date: "May 10" },
-  { competitor: "Salesforce", campaign: "Einstein AI", type: "Display", channel: "Google", variants: 7, spend: "$2.1M est.", date: "May 9" },
-  { competitor: "HubSpot", campaign: "Free CRM upgrade", type: "Search", channel: "Google", variants: 4, spend: "~$340K est.", date: "May 8" },
-  { competitor: "6sense", campaign: "Intent-driven pipeline", type: "Sponsored", channel: "LinkedIn", variants: 2, spend: "~$90K est.", date: "May 7" },
-  { competitor: "Marketo", campaign: "Engage 2025", type: "Video", channel: "YouTube", variants: 3, spend: "~$60K est.", date: "May 6" },
-  { competitor: "Salesforce", campaign: "Agentforce Launch", type: "Display", channel: "Programmatic", variants: 9, spend: "$1.4M est.", date: "May 5" },
+  { competitor: "Moveworks", campaign: "AI Automation for IT", type: "Sponsored", channel: "LinkedIn", variants: 3, spend: "~$120K est.", date: "May 10" },
+  { competitor: "Adept AI", campaign: "General AI Launch", type: "Display", channel: "Google", variants: 5, spend: "~$80K est.", date: "May 9" },
+  { competitor: "Moveworks", campaign: "Enterprise IT Assistant", type: "Search", channel: "Google", variants: 4, spend: "~$90K est.", date: "May 8" },
+  { competitor: "LangChain", campaign: "LangSmith for Teams", type: "Sponsored", channel: "LinkedIn", variants: 2, spend: "~$40K est.", date: "May 7" },
+  { competitor: "AutoGPT", campaign: "v0.5 Plugin Ecosystem", type: "Video", channel: "YouTube", variants: 3, spend: "~$15K est.", date: "May 6" },
+  { competitor: "Adept AI", campaign: "Workflow Automation Demo", type: "Display", channel: "Programmatic", variants: 4, spend: "~$60K est.", date: "May 5" },
 ];
 
 const swot = {
-  strengths: ["AI-native architecture — 18 months ahead of HubSpot", "Deep enterprise integrations (200+ connectors)", "Fastest time-to-value in category (avg 3 days)"],
-  weaknesses: ["Smaller brand recognition in SMB market", "Limited offline channel capabilities", "Higher price point vs entry-level tools"],
-  opportunities: ["Category leadership in AI marketing OS", "APAC expansion — 2× growth vs HubSpot", "Partner ecosystem — 3 SIs requesting co-marketing"],
-  threats: ["HubSpot AI Content Hub momentum", "Salesforce distribution advantage", "Increasing VC investment in competitors"],
+  strengths: ["AI-native marketing OS — purpose-built vs general-purpose competitors", "Deep enterprise integrations (200+ connectors)", "Fastest time-to-value in category (avg 3 days)"],
+  weaknesses: ["Smaller brand recognition in SMB market", "Limited offline channel capabilities", "Higher price point vs open-source alternatives"],
+  opportunities: ["Category leadership in AI marketing OS — no direct competitor yet", "APAC expansion — 2× growth potential", "Partner ecosystem — 3 SIs requesting co-marketing"],
+  threats: ["Moveworks expanding from IT automation into marketing use cases", "Adept AI's $415M war chest for GTM acceleration", "LangChain developer mindshare could shift enterprise buying decisions"],
 };
 
 // ─── Customer Intelligence ────────────────────────────────────────────────────
@@ -172,7 +174,7 @@ const journeyStages = [
 const aiRecs = [
   { id: 1, priority: "Critical", category: "Budget",      icon: AlertTriangle, color: RED,     title: "Pause Meta EMEA spend — ROAS 2.4× vs 4× target", body: "Reallocating $82K to LinkedIn ABM could save an estimated $34K in wasted CAC. EMEA campaigns consistently underperforming for 6 consecutive weeks.", impact: "Save $82K, improve blended ROAS by +0.6×" },
   { id: 2, priority: "High",     category: "SEO",         icon: Search,        color: BLUE,    title: "Create 'AI marketing automation' topic cluster — 8.4K monthly searches", body: "Zero content coverage on this keyword cluster. Competitors rank #1–3. Creating 8-piece topic cluster could capture 2.1K visits/mo by Q3.", impact: "+2,100 organic visits/mo, 14 MQLs est." },
-  { id: 3, priority: "High",     category: "Competitive", icon: ShieldAlert,   color: AMBER,   title: "Respond to HubSpot AI Content Hub launch — 72h window for counter-messaging", body: "HubSpot's launch is generating 240+ press mentions. A targeted counter-narrative around our AI-native advantage can capture share of voice now.", impact: "Capture 15–20% share of voice in category" },
+  { id: 3, priority: "High",     category: "Competitive", icon: ShieldAlert,   color: AMBER,   title: "Respond to Moveworks comparison blog — 72h window for counter-messaging", body: "Moveworks posted a comparison blog vs Lyzr generating early traction. A targeted counter-narrative around our AI-native marketing focus can recapture share of voice now.", impact: "Capture 15–20% share of voice in category" },
   { id: 4, priority: "High",     category: "Campaign",    icon: TrendingUp,    color: GREEN,   title: "Increase LinkedIn ABM budget 40% — highest performing channel at 6.8× ROAS", body: "LinkedIn ABM is outperforming all other channels. Additional $34K investment projects +$231K in pipeline contribution based on current conversion rates.", impact: "+$231K pipeline, 18 new enterprise SQLs" },
   { id: 5, priority: "Medium",   category: "Campaign",    icon: Calendar,      color: PRIMARY, title: "Q3 pre-load: August seasonality risk -23% in B2B SaaS", body: "Historical data shows B2B SaaS engagement drops 23% in August. Pre-loading campaigns in July ensures pipeline continuity through the seasonal dip.", impact: "Maintain pipeline at $8M+ through August" },
   { id: 6, priority: "Medium",   category: "Content",     icon: Users,         color: BLUE,    title: "Partner channel: 3 system integrators requesting co-marketing", body: "Deloitte Digital, Accenture Song, and WPP are requesting co-marketing partnerships. Combined reach of 45,000 enterprise prospects.", impact: "Reach 45K enterprise prospects at near-zero CAC" },
@@ -345,7 +347,7 @@ function CompetitorIntelligenceTab() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: `${PRIMARY}0a`, borderBottom: `1px solid ${BORDER}` }}>
-                {["Competitor", "Stage", "Headcount", "Recent Move", "SEO", "Ad Spend", "Threat"].map(h => (
+                {["Competitor", "SOV", "Stage / Funding", "Headcount", "Recent Move", "Strengths", "Weaknesses", "Threat"].map(h => (
                   <th key={h} style={{ padding: "10px 16px", textAlign: "left", fontSize: 12, fontWeight: 600, color: MUTED }}>{h}</th>
                 ))}
               </tr>
@@ -361,13 +363,15 @@ function CompetitorIntelligenceTab() {
                       <span style={{ fontSize: 13, fontWeight: 600, color: DARK_TEXT }}>{c.name}</span>
                     </div>
                   </td>
-                  <td style={{ padding: "14px 16px", fontSize: 12, color: MUTED }}>{c.stage}</td>
-                  <td style={{ padding: "14px 16px", fontSize: 12, color: DARK_TEXT }}>{c.headcount}</td>
-                  <td style={{ padding: "14px 16px", fontSize: 12, color: DARK_TEXT, maxWidth: 240 }}>{c.recentMove}</td>
-                  <td style={{ padding: "14px 16px" }}>
-                    {c.seoTrend === "up" ? <TrendingUp size={16} style={{ color: GREEN }} /> : <span style={{ fontSize: 12, color: MUTED }}>—</span>}
+                  <td style={{ padding: "14px 16px", fontSize: 13, fontWeight: 700, color: PRIMARY }}>{c.sov}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 12, color: MUTED }}>
+                    <div>{c.stage}</div>
+                    {c.funding !== "—" && <div style={{ fontSize: 11, color: DARK_TEXT, fontWeight: 600, marginTop: 2 }}>{c.funding}</div>}
                   </td>
-                  <td style={{ padding: "14px 16px", fontSize: 12, color: DARK_TEXT, fontWeight: 500 }}>{c.adSpend}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 12, color: DARK_TEXT }}>{c.headcount}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 12, color: DARK_TEXT, maxWidth: 200 }}>{c.recentMove}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 12, color: GREEN }}>{c.strengths}</td>
+                  <td style={{ padding: "14px 16px", fontSize: 12, color: RED }}>{c.weaknesses}</td>
                   <td style={{ padding: "14px 16px" }}><ThreatBadge level={c.threat} /></td>
                 </tr>
               ))}
@@ -412,7 +416,7 @@ function CompetitorIntelligenceTab() {
 
       {/* SWOT Analysis */}
       <section>
-        <h3 style={{ fontSize: 16, fontWeight: 700, color: DARK_TEXT, marginBottom: 16 }}>HubSpot SWOT Analysis</h3>
+        <h3 style={{ fontSize: 16, fontWeight: 700, color: DARK_TEXT, marginBottom: 16 }}>Lyzr vs AI Competitors — SWOT Analysis</h3>
         <div className="grid grid-cols-2 gap-4">
           {(["strengths", "weaknesses", "opportunities", "threats"] as const).map((key) => {
             const config = {
