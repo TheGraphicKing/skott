@@ -6,12 +6,13 @@ import { cn } from "@/lib/utils";
 import { useViewStore } from "@/lib/view-store";
 import {
   Home, Rocket, PenTool, Brain, BarChart3, GitBranch,
-  Users, Sparkles, Building2, Inbox, CircleDot, Command,
+  Users, Sparkles, Inbox, CircleDot, Command,
   Zap, LayoutDashboard, Search, DollarSign, Mail, Share2,
-  Palette, Bot, Settings, Shield, BookOpen, Activity,
-  FlaskConical, Network, ListChecks, Layers, Eye,
+  Palette, Bot, Shield, BookOpen, Activity,
+  FlaskConical, Network, ListChecks, Layers,
   FileText, TrendingUp, ClipboardList, Megaphone, Globe,
-  MonitorPlay, Workflow, Target,
+  MonitorPlay, Workflow, Target, Handshake, Star,
+  Video, Calendar, Award, Cpu, Map,
 } from "lucide-react";
 
 const MUTED = "hsl(25,20%,50%)";
@@ -20,47 +21,59 @@ const cmoSections = [
   {
     label: null,
     items: [
-      { label: "Home", href: "/", icon: Home },
-      { label: "Command Centre", href: "/command-centre", icon: LayoutDashboard },
-      { label: "Compliance & Governance", href: "/compliance", icon: Shield },
-      { label: "LLM Wiki", href: "/llm-wiki", icon: BookOpen },
+      { label: "Home",                    href: "/",                       icon: Home          },
+      { label: "Command Centre",          href: "/command-centre",         icon: LayoutDashboard },
+      { label: "Compliance & Governance", href: "/compliance",             icon: Shield        },
+      { label: "LLM Wiki",                href: "/llm-wiki",               icon: BookOpen      },
     ],
   },
   {
     label: "AGENT JOURNEYS",
     items: [
-      { label: "Campaign Planning", href: "/campaign-planning", icon: Rocket },
-      { label: "Marketing Performance", href: "/marketing-performance", icon: TrendingUp },
-      { label: "Brand & Reputation", href: "/brand-reputation", icon: Megaphone },
-      { label: "Budget & Spend", href: "/budget-spend", icon: DollarSign },
-      { label: "Content Operations", href: "/content-ops", icon: FileText },
-      { label: "Analytics & Reporting", href: "/analytics", icon: BarChart3 },
+      { label: "Campaign Planning",       href: "/campaign-planning",      icon: Rocket        },
+      { label: "Marketing Performance",   href: "/marketing-performance",  icon: TrendingUp    },
+      { label: "Brand & Reputation",      href: "/brand-reputation",       icon: Megaphone     },
+      { label: "Budget & Spend",          href: "/budget-spend",           icon: DollarSign    },
+      { label: "Content Operations",      href: "/content-ops",            icon: FileText      },
+      { label: "Analytics & Reporting",   href: "/analytics",              icon: BarChart3     },
+    ],
+  },
+  {
+    label: "GROWTH",
+    items: [
+      { label: "ABM Command Center",      href: "/growth/abm",              icon: Target        },
+      { label: "Sales Enablement",        href: "/growth/sales-enablement", icon: Zap           },
+      { label: "Customer Advocacy",       href: "/growth/advocacy",         icon: Star          },
+      { label: "Event Command Center",    href: "/growth/events",           icon: Calendar      },
+      { label: "Analyst Relations",       href: "/growth/analyst-relations",icon: Award         },
+      { label: "Partner Marketing",       href: "/growth/partner-marketing",icon: Handshake     },
     ],
   },
   {
     label: "BUILD",
     items: [
-      { label: "Agent Studio", href: "/build/agent-studio", icon: Bot },
-      { label: "Skills Manager", href: "/build/skills", icon: FlaskConical },
-      { label: "Knowledge Base", href: "/build/knowledge-base", icon: Layers },
-      { label: "Integrations", href: "/build/integrations", icon: Network },
-      { label: "Skill Flows", href: "/build/skill-flows", icon: GitBranch },
+      { label: "Agent Studio",            href: "/build/agent-studio",     icon: Bot           },
+      { label: "Skills Manager",          href: "/build/skills",           icon: FlaskConical  },
+      { label: "Knowledge Base",          href: "/build/knowledge-base",   icon: Layers        },
+      { label: "Integrations",            href: "/build/integrations",     icon: Network       },
+      { label: "Skill Flows",             href: "/build/skill-flows",      icon: GitBranch     },
     ],
   },
   {
     label: "OBSERVE",
     items: [
-      { label: "Decision Inbox", href: "/observe/decision-inbox", icon: Inbox },
-      { label: "Agent Metrics", href: "/observe/agent-runs", icon: Activity },
-      { label: "Agent Runs", href: "/observe/agent-runs", icon: MonitorPlay },
-      { label: "Compliance & Guardrails", href: "/observe/compliance", icon: Shield },
-      { label: "Audit Trail", href: "/observe/audit-trail", icon: ListChecks },
+      { label: "Decision Inbox",          href: "/observe/decision-inbox", icon: Inbox         },
+      { label: "Agent Metrics",           href: "/observe/agent-metrics",  icon: Activity      },
+      { label: "Agent Runs",              href: "/observe/agent-runs",     icon: MonitorPlay   },
+      { label: "Compliance & Guardrails", href: "/observe/compliance",     icon: Shield        },
+      { label: "Audit Trail",             href: "/observe/audit-trail",    icon: ListChecks    },
     ],
   },
   {
     label: null,
     items: [
-      { label: "Team & Ops", href: "/team", icon: Users },
+      { label: "Team & Ops",              href: "/team",                   icon: Users         },
+      { label: "Agent Center",            href: "/agent-center",           icon: Cpu           },
     ],
   },
 ];
@@ -69,40 +82,48 @@ const marketerSections = [
   {
     label: null,
     items: [
-      { label: "Home", href: "/", icon: Home },
-      { label: "Campaigns", href: "/campaigns", icon: Rocket },
-      { label: "Content Studio", href: "/content-studio", icon: PenTool },
+      { label: "Home",               href: "/",              icon: Home          },
+      { label: "Campaigns",          href: "/campaigns",     icon: Rocket        },
+      { label: "Content Studio",     href: "/content-studio",icon: PenTool       },
     ],
   },
   {
     label: "CHANNELS",
     items: [
-      { label: "Social Studio", href: "/social", icon: Share2 },
-      { label: "Ad Creative Studio", href: "/creative-hub", icon: Palette },
-      { label: "Email & CRM Hub", href: "/email-crm", icon: Mail },
+      { label: "Social Studio",      href: "/social",        icon: Share2        },
+      { label: "Ad Creative Studio", href: "/creative-hub",  icon: Palette       },
+      { label: "Email & CRM Hub",    href: "/email-crm",     icon: Mail          },
     ],
   },
   {
     label: "INTELLIGENCE",
     items: [
-      { label: "SEO & Organic", href: "/seo", icon: Search },
-      { label: "Competitive Intel", href: "/intelligence", icon: Brain },
-      { label: "Market Signals", href: "/paid-media", icon: Target },
+      { label: "SEO & Organic",      href: "/seo",           icon: Search        },
+      { label: "Competitive Intel",  href: "/intelligence",  icon: Brain         },
+      { label: "Market Signals",     href: "/paid-media",    icon: Target        },
+    ],
+  },
+  {
+    label: "DIGITAL",
+    items: [
+      { label: "Website Operations", href: "/digital/website-ops",  icon: Globe  },
+      { label: "Lead Operations",    href: "/digital/lead-ops",     icon: Map    },
+      { label: "Video Studio",       href: "/digital/video-studio", icon: Video  },
     ],
   },
   {
     label: "OPERATIONS",
     items: [
-      { label: "Automation Flows", href: "/workflows", icon: Workflow },
-      { label: "Workflows", href: "/workflows", icon: GitBranch },
-      { label: "Asset Library", href: "/brand-brain", icon: Sparkles },
+      { label: "Automation Flows",   href: "/workflows",    icon: Workflow       },
+      { label: "Workflows",          href: "/workflows",    icon: GitBranch      },
+      { label: "Asset Library",      href: "/brand-brain",  icon: Sparkles       },
+      { label: "My Tasks",           href: "/my-tasks",     icon: ClipboardList  },
     ],
   },
   {
     label: null,
     items: [
-      { label: "My Tasks", href: "/team", icon: ClipboardList },
-      { label: "Analytics", href: "/analytics", icon: BarChart3 },
+      { label: "Analytics",          href: "/analytics",    icon: BarChart3      },
     ],
   },
 ];
@@ -126,7 +147,6 @@ export function Sidebar() {
         boxShadow: "4px 0 30px #673f1b08",
       }}
     >
-      {/* Brand header */}
       <div className="h-16 flex items-center px-5 gap-3" style={{ borderBottom: "1px solid #673f1b1a" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/lyzr-logo.png" alt="Lyzr" style={{ height: 26, width: "auto", objectFit: "contain" }} />
@@ -136,7 +156,6 @@ export function Sidebar() {
         </div>
       </div>
 
-      {/* CMD+K trigger */}
       <div className="px-3 pt-3 pb-1">
         <button
           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-all"
@@ -149,7 +168,6 @@ export function Sidebar() {
         </button>
       </div>
 
-      {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-2 px-3 space-y-0.5">
         {sections.map((section, si) => (
           <div key={si} className={section.label ? "pt-3" : "pt-1"}>
@@ -167,9 +185,7 @@ export function Sidebar() {
         ))}
       </nav>
 
-      {/* Footer */}
       <div className="p-3" style={{ borderTop: "1px solid #673f1b1a" }}>
-        {/* Sample Data toggle */}
         <button
           onClick={toggleSampleData}
           className="w-full flex items-center gap-2 px-3 py-2 rounded-lg mb-2 transition-all text-left"
@@ -185,9 +201,10 @@ export function Sidebar() {
             />
           </div>
           <span className="text-[10px] font-medium" style={{ color: MUTED }}>Sample Data</span>
+          {sampleData && (
+            <span className="ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded" style={{ background: "hsl(25,62%,25%)", color: "#fff" }}>DEMO</span>
+          )}
         </button>
-
-        {/* Agent status */}
         <div
           className="flex items-center gap-3 px-2 py-2 rounded-xl"
           style={{ background: "#f8f2e999", border: "1px solid #673f1b1a" }}
