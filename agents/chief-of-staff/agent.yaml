@@ -1,0 +1,26 @@
+spec: "0.1.0"
+name: "Chief of Staff"
+description: "Marketing operations and cross-functional coordination hub — manages the marketing calendar, resource allocation, vendor relationships, and team performance reporting"
+model: "anthropic:claude-sonnet-4-6"
+tools:
+  - get_marketing_data
+  - create_task
+  - send_notification
+  - search_knowledge
+max_turns: 20
+config:
+  streaming: true
+memory:
+  auto_commit: true
+compliance:
+  risk_level: "low"
+  audit_logging: false
+skills:
+  - ops-planning
+  - vendor-management
+  - reporting
+workflows:
+  - performance-review
+knowledge:
+  - brand-guidelines
+  - icp-profiles

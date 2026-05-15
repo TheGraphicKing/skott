@@ -1,0 +1,35 @@
+name: brand-audit
+description: Comprehensive brand consistency audit across all customer-facing channels, culminating in a prioritized correction report
+type: flow
+steps:
+  - skill: messaging-audit
+    prompt: |
+      Conduct a full messaging consistency audit across all Lyzr customer-facing channels.
+      Collect messaging from: website (homepage, product pages, pricing, about), paid ads
+      (Google, LinkedIn, Meta), social profiles and recent posts, sales materials (email sequences,
+      deck cover slides, email signatures), and any partner or press content from the last 12 months.
+      Extract the core positioning claim, value proposition, and target audience implied by each
+      touchpoint. Compare against the approved source of truth in brand-guidelines.md and icp-profiles.md.
+      Identify all contradictions, positioning drift, outdated claims, nomenclature inconsistencies,
+      and missing messaging pillar coverage. Output a numbered issues list with current text,
+      problem description, and exact corrected replacement copy for each issue.
+
+  - skill: brand-review
+    prompt: |
+      Using the issues identified in the messaging audit, conduct a deep brand review of the three
+      highest-traffic or highest-impact touchpoints flagged. For each: run the full brand review
+      checklist — mission alignment, tone (expert/accessible/not jargon-heavy), all three messaging
+      pillars, prohibited language scan, and formatting conventions. Produce a pass/fail table per
+      criterion per touchpoint. Prioritize issues by: severity (active contradiction vs. drift),
+      monthly reach of the touchpoint, and effort to fix. Output a combined issues table ranked by
+      priority with specific edits required.
+
+  - skill: reporting
+    prompt: |
+      Produce a brand audit report for CMO review. Structure: (1) executive summary — how consistent
+      is Lyzr's messaging right now, and what is the headline risk? (2) Issues by severity — critical
+      (contradictions or false claims), moderate (positioning drift or outdated), minor (naming/formatting);
+      (3) Top 5 priority fixes with owners and deadlines; (4) Recommended governance changes to prevent
+      future drift (e.g., review cadence, approval checklist, style guide updates); (5) An approved
+      standard phrasing reference for the most commonly misused terms and descriptions.
+      Format for CMO consumption — 5-minute read maximum.

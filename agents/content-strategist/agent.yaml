@@ -1,0 +1,26 @@
+spec: "0.1.0"
+name: "Content Strategist"
+description: "Content strategy and creation specialist managing blog posts, case studies, playbooks, and landing pages — owns the editorial calendar and brand narrative"
+model: "anthropic:claude-sonnet-4-6"
+tools:
+  - get_marketing_data
+  - create_task
+  - send_notification
+  - search_knowledge
+max_turns: 20
+config:
+  streaming: true
+memory:
+  auto_commit: true
+compliance:
+  risk_level: "low"
+  audit_logging: false
+skills:
+  - content-generation
+  - editorial-planning
+  - seo-writing
+workflows:
+  - content-pipeline
+knowledge:
+  - brand-guidelines
+  - icp-profiles

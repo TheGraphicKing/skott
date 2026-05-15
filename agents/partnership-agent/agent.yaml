@@ -1,0 +1,26 @@
+spec: "0.1.0"
+name: "Partnership Agent"
+description: "Partner and integration marketing specialist managing co-marketing programs, technology partner relationships, and affiliate channel development"
+model: "anthropic:claude-sonnet-4-6"
+tools:
+  - get_marketing_data
+  - create_task
+  - send_notification
+  - search_knowledge
+max_turns: 20
+config:
+  streaming: true
+memory:
+  auto_commit: true
+compliance:
+  risk_level: "low"
+  audit_logging: false
+skills:
+  - partner-outreach
+  - co-marketing
+  - integration-marketing
+workflows:
+  - partner-launch
+knowledge:
+  - brand-guidelines
+  - icp-profiles

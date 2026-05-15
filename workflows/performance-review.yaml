@@ -1,0 +1,41 @@
+name: performance-review
+description: Structured marketing performance review cycle — from channel-level analysis through executive reporting with budget recommendations
+type: flow
+steps:
+  - skill: campaign-analysis
+    prompt: |
+      Pull full campaign performance data for the review period (specify: last 7 days for weekly review,
+      last 30 days for monthly, last 90 days for quarterly). Analyze all active campaigns across
+      Google Ads, LinkedIn, and Meta. Calculate and compare CTR, CPC, conversion rate, CPA, ROAS,
+      and absolute spend per campaign. Score each campaign 1-5 on efficiency and trend direction.
+      Identify underperformers (ROAS below 2.0, CPA more than 25% above target, or conversion rate
+      declining for 3+ consecutive periods). For each underperformer, diagnose the most likely root
+      cause. Output a ranked campaign table and an underperformer deep-dive section.
+
+  - skill: performance-reporting
+    prompt: |
+      Using the campaign analysis, generate the executive performance report for this review period.
+      Lead with the single most important number (pipeline generated or MQLs vs. target). Write the
+      full performance narrative: what happened, what drove it, what didn't work and why. Include
+      a key metrics table (pipeline, MQLs, SQLs, marketing-sourced revenue, total spend, blended ROAS)
+      with period-over-period delta. Surface 2-3 specific wins and 1-2 honest issues with root causes.
+      Identify risks to next period's performance. Format for a 4-minute CMO read.
+
+  - skill: budget-optimization
+    prompt: |
+      Based on the campaign analysis and performance report, produce a budget reallocation recommendation
+      for the next period. Use ROAS efficiency scores to identify where budget should move from and to.
+      Apply strategic overlays: protect brand awareness channels, respect new channel experiment minimums,
+      account for seasonal patterns. Model conservative (≤15% shift) and aggressive (≤30% shift) scenarios.
+      For each recommended move, provide: exact dollar amount, source channel, destination channel,
+      and a one-sentence data-backed rationale. Project expected impact on MQLs, pipeline, and blended ROAS.
+
+  - skill: reporting
+    prompt: |
+      Assemble the complete performance review report package. Combine the campaign analysis data,
+      executive narrative, and budget recommendation into a single, structured report. Include:
+      (1) headline dashboard — top 6 metrics with targets and deltas; (2) channel performance
+      breakdown table; (3) budget reallocation summary; (4) recommended actions table with owner,
+      deadline, and expected impact; (5) anomaly log — any metric that moved more than 20%
+      in either direction this period with a plain-language explanation. Export-ready for
+      sharing with CMO, CRO, and CEO.

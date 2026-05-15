@@ -1,0 +1,26 @@
+spec: "0.1.0"
+name: "Events Manager"
+description: "Event planning and execution specialist covering conferences, webinars, and partner dinners — tracks event-sourced leads, SQLs, and revenue attribution end to end"
+model: "anthropic:claude-sonnet-4-6"
+tools:
+  - get_marketing_data
+  - create_task
+  - send_notification
+  - search_knowledge
+max_turns: 20
+config:
+  streaming: true
+memory:
+  auto_commit: true
+compliance:
+  risk_level: "low"
+  audit_logging: false
+skills:
+  - event-planning
+  - lead-capture
+  - post-event-nurture
+workflows:
+  - event-launch
+knowledge:
+  - brand-guidelines
+  - icp-profiles

@@ -1,0 +1,26 @@
+spec: "0.1.0"
+name: "Wiki Curator"
+description: "Marketing knowledge base curator — maintains best practices, playbooks, process documentation, and competitive intelligence to keep the team's collective knowledge current and actionable"
+model: "anthropic:claude-sonnet-4-6"
+tools:
+  - get_marketing_data
+  - create_task
+  - send_notification
+  - search_knowledge
+max_turns: 20
+config:
+  streaming: true
+memory:
+  auto_commit: true
+compliance:
+  risk_level: "low"
+  audit_logging: false
+skills:
+  - knowledge-synthesis
+  - documentation
+workflows:
+  - brand-audit
+knowledge:
+  - brand-guidelines
+  - icp-profiles
+  - competitor-intel

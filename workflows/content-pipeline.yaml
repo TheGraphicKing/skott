@@ -1,0 +1,49 @@
+name: content-pipeline
+description: Full content production pipeline from keyword research through publishing-ready, brand-approved, SEO-optimized content
+type: flow
+steps:
+  - skill: keyword-research
+    prompt: |
+      Identify keyword clusters for the content topic or campaign theme provided. Research keywords
+      for Lyzr's primary ICP (CMO and VP Marketing at mid-market to enterprise B2B SaaS companies).
+      Group by intent: navigational, informational, commercial, transactional. For each cluster,
+      identify the primary keyword, 4-6 supporting keywords, monthly search volume, keyword difficulty,
+      and business relevance score. Prioritize clusters that have high business relevance (score 4-5)
+      and keyword difficulty under 50. Output a keyword table and a ranked cluster summary.
+
+  - skill: editorial-planning
+    prompt: |
+      Using the keyword clusters from the previous step, build a 4-week content calendar. Map each
+      cluster to a content type (blog post, pillar page, comparison page, case study), funnel stage
+      (TOFU/MOFU/BOFU), and persona. Ensure coverage across the full funnel — do not over-index
+      on awareness content. Assign estimated publish dates, writer owners, and review deadlines.
+      Flag any persona or funnel stage gaps. Output a calendar table and a backlog of additional
+      content ideas that didn't fit the 4 weeks.
+
+  - skill: content-generation
+    prompt: |
+      Generate the highest-priority content piece identified in the editorial plan. Use the primary
+      keyword cluster, persona, and funnel stage from the previous steps. Write a full long-form piece
+      (1,500-2,500 words for a blog post; 3,000+ for a pillar page). Follow Lyzr brand voice:
+      expert but accessible, never jargon-heavy, active voice throughout. Include a clear narrative
+      arc, specific data points or examples in every major section, and a CTA appropriate to the
+      funnel stage. Output: full draft with title, meta description, and internal link suggestions.
+
+  - skill: seo-writing
+    prompt: |
+      Take the content draft from the previous step and apply full on-page SEO optimization.
+      Verify: primary keyword in H1, first 100 words, and at least 2 H2s. Check keyword density
+      (0.3-0.8% for primary keyword). Optimize the title tag (50-60 chars) and meta description
+      (140-155 chars). Review H2/H3 hierarchy against "People Also Ask" for the target keyword.
+      Add FAQ section with schema markup recommendation if appropriate. Identify 3-5 internal link
+      opportunities and suggest anchor text. Flag any AEO improvements for featured snippet capture.
+
+  - skill: brand-review
+    prompt: |
+      Review the SEO-optimized content against Lyzr brand guidelines. Check: mission alignment
+      (enterprise-grade, agentic AI positioning), tone (expert but accessible, no jargon walls),
+      all three messaging pillars (speed to value, enterprise-grade, no vendor lock-in), prohibited
+      language (no "easy", "simple", passive voice, unsubstantiated superlatives), and formatting
+      conventions (Oxford comma, number formatting, correct company and product name). Output a
+      pass/fail table per criterion. For each failure, provide the exact current text and exact
+      replacement copy. Deliver an overall status: PASS / PASS WITH REVISIONS / FAIL.

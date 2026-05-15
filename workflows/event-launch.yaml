@@ -1,0 +1,60 @@
+name: event-launch
+description: Full event lifecycle workflow from planning and lead capture design through promotion and post-event nurture
+type: flow
+steps:
+  - skill: event-planning
+    prompt: |
+      Plan the event end-to-end. Define: event type (webinar / virtual summit / in-person / roundtable),
+      primary goal (pipeline generation / brand awareness / customer expansion), target audience (persona
+      and seniority), expected registration and attendance targets, date/time/platform, and budget.
+      Build the full agenda with session titles, speaker slots, and timings. Create a speaker management
+      plan: who to recruit, outreach timeline, briefing schedule, and rehearsal dates.
+      Produce a three-phase promotion calendar (announcement 4 weeks out, nurture 3-1 weeks out,
+      last-push final week) with specific tactics per phase (email sends, LinkedIn posts, paid campaigns,
+      speaker promotion packs). Include a day-of execution runsheet and a registration tracking plan
+      with UTM parameters for every promotional channel.
+
+  - skill: lead-capture
+    prompt: |
+      Design the lead capture system for this event. Define qualification criteria: minimum company size,
+      target industries, and required job titles based on Lyzr's ICP. For in-person events, configure
+      badge scanning with 3-5 qualifying questions. For webinars, specify registration form fields
+      (required vs. optional) and post-registration enrichment approach.
+      Define lead routing rules by tier: Tier 1 (hot — ICP match + buying intent) routes to SDR within
+      4 hours; Tier 2 (warm — ICP match, no timeline) enters post-event nurture; Tier 3 (partial fit)
+      enters general marketing nurture; disqualified leads are tagged and closed.
+      Specify CRM setup: event source tags, lead status mapping, and attribution fields.
+      Output a complete lead capture checklist with pre-event setup, during-event, and post-event actions.
+      Set targets: total leads, Tier 1 count, and expected SQLs within 90 days.
+
+  - skill: social-content-creation
+    prompt: |
+      Create a full social content package to promote this event across LinkedIn, Twitter/X, and Reddit.
+      For each platform, write:
+      (1) Announcement post (4 weeks before): hook with the core value of attending, speaker names,
+      date/time, registration link.
+      (2) Reminder post (1 week before): lead with a specific insight or preview from the content
+      (not just "don't forget to register").
+      (3) Day-of post: urgency-driven, live link, one compelling reason to tune in today.
+      (4) Post-event post: key takeaway from the session + link to recording.
+      Adapt tone and format for each platform. LinkedIn: professional, insight-led, 900-1,300 chars.
+      Twitter/X: punchy and direct, under 280 chars each (consider thread format for announcement).
+      Reddit: practitioner-tone, value-first, transparent about Lyzr's involvement.
+      Include character counts and verify CTAs are specific and platform-appropriate.
+
+  - skill: post-event-nurture
+    prompt: |
+      Build the complete post-event nurture system for the three attendee segments:
+      Segment A (attended + engaged), Segment B (attended, no direct engagement), Segment C (registered
+      but no-showed).
+      Write the full 5-touch email sequence for each segment. Each email needs: a distinct subject line
+      (no "Following up" or "Checking in"), a specific event reference, clear value delivery in every
+      touch, and a single CTA. Progress from value-first (touches 1-2) to social proof (touch 3) to
+      direct ask (touch 4) to break-up format (touch 5).
+      Write LinkedIn follow-up templates: connection request message, post-connection follow-up, and
+      re-engage for non-responders after email touch 3.
+      Define sales handoff criteria: auto-handoff triggers (demo link clicked, pricing page visited 2x,
+      email reply with intent signal) and SDR-review triggers.
+      Specify CRM enrollment rules, exit criteria, and conversion tracking setup.
+      Set success metrics targets: open rate >35%, click rate >8%, reply rate >5%, demo booked >3%
+      of total event leads.

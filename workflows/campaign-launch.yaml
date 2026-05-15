@@ -1,0 +1,34 @@
+name: campaign-launch
+description: End-to-end workflow for launching a new paid campaign — from audience definition through baseline analysis, budget allocation, and initial performance reporting
+type: flow
+steps:
+  - skill: audience-analysis
+    prompt: |
+      Analyze the target audience for this campaign. Pull available CRM, ad platform, and behavioral data.
+      Identify the primary and secondary segments to target, score each segment by intent and ICP fit,
+      and surface look-alike expansion opportunities. Output a segment table with recommended targeting
+      parameters for Google Ads, LinkedIn, and Meta. Flag any segments that should be excluded.
+
+  - skill: campaign-analysis
+    prompt: |
+      Establish the performance baseline before this campaign goes live. Pull the last 90 days of campaign
+      data across Google Ads, LinkedIn, and Meta. Calculate CTR, CPC, CPA, conversion rate, and ROAS
+      for each active campaign. Identify which campaigns are currently underperforming (ROAS below 2.0
+      or CPA more than 25% above target) so the new campaign can be designed to avoid the same failure
+      modes. Output a ranked performance table with clear annotations on what is working and what is not.
+
+  - skill: budget-optimization
+    prompt: |
+      Using the audience analysis and performance baseline, recommend how to allocate budget for the new
+      campaign across channels. Model two scenarios: conservative (shift ≤15% of current channel mix)
+      and aggressive (shift ≤30%). Factor in audience size per channel, historical ROAS, CPA targets,
+      and strategic priority. Output a reallocation table with dollar amounts, rationale for each
+      allocation decision, projected MQL and pipeline impact, and key assumptions.
+
+  - skill: performance-reporting
+    prompt: |
+      Generate a pre-launch performance report for CMO review. Structure: (1) current marketing
+      performance snapshot — headline metrics for the last 30 days; (2) rationale for this campaign
+      launch — what gap or opportunity it addresses; (3) campaign parameters — target audience,
+      channels, budget, expected ROAS and MQL targets; (4) risks and mitigations; (5) success criteria
+      and the metrics that will be reviewed at the 2-week check-in. Format for a 4-minute read.

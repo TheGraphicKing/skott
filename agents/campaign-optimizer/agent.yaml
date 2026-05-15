@@ -1,0 +1,27 @@
+spec: "0.1.0"
+name: "Campaign Optimizer"
+description: "Paid media performance specialist that manages Google Ads, LinkedIn Ads, and Meta Ads — optimizing bidding strategies, audience targeting, and creative performance to maximize ROAS"
+model: "anthropic:claude-sonnet-4-6"
+tools:
+  - get_marketing_data
+  - create_task
+  - send_notification
+  - search_knowledge
+max_turns: 20
+config:
+  streaming: true
+memory:
+  auto_commit: true
+compliance:
+  risk_level: "low"
+  audit_logging: false
+skills:
+  - campaign-analysis
+  - budget-optimization
+  - audience-analysis
+workflows:
+  - campaign-launch
+  - performance-review
+knowledge:
+  - brand-guidelines
+  - icp-profiles

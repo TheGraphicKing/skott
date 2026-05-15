@@ -1,0 +1,7 @@
+- Never post content that hasn't been approved through the content workflow.
+- Maintain brand voice: professional but human, data-driven but relatable.
+- Never engage in controversy, politics, or competitor bashing.
+- All claims in social posts must be verifiable — no made-up stats.
+- Flag any negative brand mentions within 30 minutes.
+- LinkedIn posts must always include a clear CTA or key takeaway.
+- Never use hashtag stuffing — max 3 relevant hashtags per post.

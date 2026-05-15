@@ -1,0 +1,54 @@
+name: seo-sprint
+description: Focused 30-day SEO improvement sprint — from technical audit and keyword discovery through content optimization and results reporting
+type: flow
+steps:
+  - skill: seo-audit
+    prompt: |
+      Run a full SEO audit of the Lyzr website. Check all four dimensions:
+      (1) Technical: crawlability, Core Web Vitals, page speed, HTTPS, canonical tags, duplicate content,
+      mobile readiness, and sitemap/robots.txt configuration.
+      (2) Keyword coverage: pull current rankings from Google Search Console, identify pages in positions
+      11-30 ("striking distance" quick wins), and find keyword gaps where competitors rank top 10 but
+      Lyzr does not rank in the top 50.
+      (3) Content quality: for the top 20 pages by organic traffic, assess intent alignment, comprehensiveness
+      vs. competing pages, freshness, and E-E-A-T signals.
+      (4) Backlinks: total referring domain count, lost links, toxic link candidates, and competitor
+      backlink gaps.
+      Prioritize every finding by estimated traffic and pipeline impact. Output a prioritized action plan
+      with Critical / High / Medium / Low designations.
+
+  - skill: keyword-research
+    prompt: |
+      Using the SEO audit's keyword gap findings as a starting point, conduct expanded keyword research
+      for Lyzr's primary topics. Focus on:
+      (1) High-value gaps — keywords where competitors rank top 10 and Lyzr doesn't appear.
+      (2) Quick wins — terms where Lyzr currently ranks positions 11-30 with meaningful search volume.
+      (3) New clusters — informational and commercial intent keywords aligned to the CMO/VP Marketing
+      persona that Lyzr has no content for yet.
+      Group by intent (informational, commercial, transactional). Score by business relevance (1-5),
+      difficulty, and volume. Output a keyword cluster table with action assignments:
+      optimize existing page / create new page / build topic cluster.
+
+  - skill: content-optimization
+    prompt: |
+      Select the top 5 highest-priority pages from the SEO audit and keyword research — prioritizing
+      pages in striking distance (positions 11-30) with high business relevance. For each page:
+      (1) Analyze the current content against the SERP intent for its target keyword.
+      (2) Audit all on-page elements: title tag, meta description, H1, H2/H3 structure, keyword density,
+      internal links, and image alt text.
+      (3) Identify content gaps vs. the top 3 competing pages.
+      (4) Optimize for AEO: add FAQ section, improve definition paragraph, add schema markup recommendation.
+      (5) Provide a complete list of specific changes needed — include exact replacement copy for
+      title tags, meta descriptions, and H1s. Do not give vague directions.
+
+  - skill: reporting
+    prompt: |
+      Produce the SEO sprint summary report. Include:
+      (1) Sprint summary: total issues found in audit, pages optimized, new keyword targets identified.
+      (2) Pre-sprint baseline: organic sessions, top 10 keywords, average position for target terms.
+      (3) Actions taken: table of completed optimizations with page URL, change made, and expected impact.
+      (4) Pending actions: what's queued for the next sprint (technical fixes requiring dev, new content
+      to create, backlink outreach to initiate).
+      (5) Expected outcomes: projected traffic impact from each completed optimization (use conservative
+      estimates based on keyword volume and position improvement probability).
+      (6) 30-day follow-up: define the metrics to check at the next sprint review to evaluate impact.
