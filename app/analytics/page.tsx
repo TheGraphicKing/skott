@@ -797,17 +797,49 @@ function NLQueryBar() {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function AnalyticsPage() {
   const [activeTab, setActiveTab] = useState<Tab>("Executive Dashboard");
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportDone, setReportDone] = useState(false);
+  const [boardPackLoading, setBoardPackLoading] = useState(false);
+  const [boardPackDone, setBoardPackDone] = useState(false);
+
+  function handleGenerateReport() {
+    setReportLoading(true);
+    setTimeout(() => { setReportLoading(false); setReportDone(true); setTimeout(() => setReportDone(false), 3000); }, 2000);
+  }
+  function handleBoardPack() {
+    setBoardPackLoading(true);
+    setTimeout(() => { setBoardPackLoading(false); setBoardPackDone(true); setTimeout(() => setBoardPackDone(false), 3000); }, 2500);
+  }
 
   return (
     <div style={{ minHeight: "100vh", background: PAGE_BG, padding: "32px 32px 64px" }}>
       {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <div className="flex items-center gap-2 mb-1">
-          <BarChart3 size={22} style={{ color: PRIMARY }} />
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: DARK_TEXT }}>Analytics & Attribution</h1>
+      <div style={{ marginBottom: 24, display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+        <div>
+          <div className="flex items-center gap-2 mb-1">
+            <BarChart3 size={22} style={{ color: PRIMARY }} />
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: DARK_TEXT }}>Analytics & Attribution</h1>
+          </div>
+          <p style={{ fontSize: 14, color: MUTED }}>Revenue attribution, funnel intelligence & marketing forecasting</p>
         </div>
-        <p style={{ fontSize: 14, color: MUTED }}>Revenue attribution, funnel intelligence & marketing forecasting</p>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button
+            onClick={handleGenerateReport}
+            disabled={reportLoading}
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: `1px solid ${BORDER}`, background: CARD, fontSize: 13, fontWeight: 600, color: DARK_TEXT, cursor: "pointer" }}
+          >
+            {reportLoading ? "Generating…" : reportDone ? "✓ Report Sent!" : "Generate Weekly Report"}
+          </button>
+          <button
+            onClick={handleBoardPack}
+            disabled={boardPackLoading}
+            style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 8, border: "none", background: PRIMARY, fontSize: 13, fontWeight: 600, color: "#fff", cursor: "pointer" }}
+          >
+            {boardPackLoading ? "Building…" : boardPackDone ? "✓ Board Pack Ready!" : "Build Board Pack"}
+          </button>
+        </div>
       </div>
+      <div style={{ marginBottom: 8 }}></div>
 
       {/* NL Query Bar — above tabs */}
       <NLQueryBar />

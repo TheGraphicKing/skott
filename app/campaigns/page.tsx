@@ -10,6 +10,7 @@ import {
   Bot, Send, Layers, FileText, PlayCircle, Pause,
   Calendar, Tag, Eye, MoreHorizontal, Filter, Search,
   Mail, Monitor, Star, ChevronDown,
+  X, Edit2, Share2, Settings, Download, CheckCircle, User,
 } from "lucide-react";
 
 // ─── Design Tokens ───────────────────────────────────────────────────────────
@@ -204,13 +205,632 @@ function MiniBar({ pct, color }: { pct: number; color: string }) {
   );
 }
 
+// ─── Campaign Slideout ────────────────────────────────────────────────────────
+function CampaignSlideout({ campaign, onClose }: { campaign: typeof campaigns[0] | null; onClose: () => void }) {
+  const [activeTab, setActiveTab] = useState("Overview");
+  const slideoutTabs = ["Overview", "Assets", "Timeline", "Team", "Performance", "Settings"];
+
+  const [settingsName, setSettingsName] = useState(campaign?.name ?? "");
+  const [settingsBudget, setSettingsBudget] = useState(campaign?.budget ?? "");
+  const [settingsStatus, setSettingsStatus] = useState<"Active" | "Paused">("Active");
+
+  // Sync settings fields when campaign changes
+  if (!campaign) return null;
+
+  const timelineMilestones = [
+    { label: "Brief Approved", date: "May 1", done: true },
+    { label: "Creative Brief Sent", date: "May 5", done: true },
+    { label: "First Draft Review", date: "May 10", done: true },
+    { label: "Final Assets Due", date: "May 20", done: false, status: "Pending" },
+    { label: "Campaign Launch", date: "May 22", done: false, status: "Pending" },
+    { label: "Week 2 Review", date: "May 29", done: false, status: "Pending" },
+  ];
+
+  const teamMembers = [
+    { initials: "SC", name: "Sarah Chen", role: "Campaign Lead", capacity: 85 },
+    { initials: "EW", name: "Emily Watson", role: "Creative Director", capacity: 60 },
+    { initials: "DK", name: "David Kim", role: "Paid Media", capacity: 72 },
+  ];
+
+  const assets = [
+    { name: "Campaign Brief PDF", status: "Ready", files: "1 file" },
+    { name: "Hero Banner Set", status: "Ready", files: "3 files" },
+    { name: "Email Sequence", status: "Pending", files: "5 emails" },
+  ];
+
+  const perfMetrics = [
+    { label: "Impressions", value: "284K", color: BLUE },
+    { label: "Clicks", value: "18.4K", color: GREEN },
+    { label: "CTR", value: "6.5%", color: AMBER },
+    { label: "Conversions", value: "847", color: PRIMARY },
+  ];
+
+  return (
+    <>
+      {/* Backdrop */}
+      <motion.div
+        key="backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+        style={{
+          position: "fixed", inset: 0, zIndex: 200,
+          background: "rgba(0,0,0,0.35)", backdropFilter: "blur(2px)",
+        }}
+      />
+      {/* Panel */}
+      <motion.div
+        key="panel"
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 32 }}
+        style={{
+          position: "fixed", top: 0, right: 0, bottom: 0, width: 480, zIndex: 201,
+          background: "#fff", boxShadow: "-8px 0 40px rgba(0,0,0,0.15)",
+          display: "flex", flexDirection: "column", overflow: "hidden",
+        }}
+      >
+        {/* Slideout Header */}
+        <div style={{
+          padding: "18px 20px 14px", borderBottom: `1px solid ${BORDER}`,
+          flexShrink: 0,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 800, color: DARK_TEXT, marginBottom: 4 }}>{campaign.name}</div>
+              <StatusBadge status={campaign.status} />
+            </div>
+            <button
+              onClick={onClose}
+              style={{
+                background: "transparent", border: `1px solid ${BORDER}`, borderRadius: 8,
+                width: 32, height: 32, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >
+              <X size={16} color={MUTED} />
+            </button>
+          </div>
+          {/* Action Buttons */}
+          <div style={{ display: "flex", gap: 8 }}>
+            <button style={{
+              flex: 1, background: PRIMARY, color: "#fff", border: "none",
+              borderRadius: 8, padding: "7px 0", fontSize: 11, fontWeight: 600, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+            }}>
+              <Edit2 size={12} /> Edit Campaign
+            </button>
+            <button style={{
+              flex: 1, background: "transparent", color: AMBER, border: `1px solid ${AMBER}`,
+              borderRadius: 8, padding: "7px 0", fontSize: 11, fontWeight: 600, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+            }}>
+              <Pause size={12} /> Pause
+            </button>
+            <button style={{
+              background: "transparent", color: BLUE, border: `1px solid ${BLUE}`,
+              borderRadius: 8, padding: "7px 12px", fontSize: 11, fontWeight: 600, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+            }}>
+              <Share2 size={12} /> Share
+            </button>
+          </div>
+        </div>
+
+        {/* Slideout Tabs */}
+        <div style={{
+          display: "flex", gap: 2, padding: "10px 16px", borderBottom: `1px solid ${BORDER}`,
+          overflowX: "auto", flexShrink: 0, background: PAGE_BG,
+        }}>
+          {slideoutTabs.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                padding: "5px 12px", borderRadius: 7, fontSize: 11, fontWeight: 600,
+                cursor: "pointer", border: "none", whiteSpace: "nowrap", transition: "all 0.15s",
+                background: activeTab === tab ? PRIMARY : "transparent",
+                color: activeTab === tab ? "#fff" : MUTED,
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Slideout Body */}
+        <div style={{ flex: 1, overflowY: "auto", padding: 20 }}>
+          <AnimatePresence mode="wait">
+            <motion.div key={activeTab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+
+              {/* ── Overview Tab ── */}
+              {activeTab === "Overview" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  {/* Budget Progress */}
+                  <div style={{ background: PAGE_BG, borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 10 }}>Budget</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: MUTED, marginBottom: 6 }}>
+                      <span>$68K spent</span>
+                      <span>of {campaign.budget}</span>
+                    </div>
+                    <ProgressBar pct={campaign.spent} />
+                    <div style={{ fontSize: 10, color: MUTED, marginTop: 6 }}>{campaign.spent}% utilized</div>
+                  </div>
+
+                  {/* Metrics Row */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+                    {[
+                      { label: "CTR", value: campaign.ctr },
+                      { label: "ROAS", value: campaign.roas },
+                      { label: "CAC", value: campaign.cac },
+                    ].map(m => (
+                      <div key={m.label} style={{ background: PAGE_BG, borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
+                        <div style={{ fontSize: 10, color: MUTED, marginBottom: 3 }}>{m.label}</div>
+                        <div style={{ fontSize: 16, fontWeight: 800, color: DARK_TEXT }}>{m.value}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Owner / Team */}
+                  <div style={{ background: PAGE_BG, borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 10 }}>Team</div>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      {campaign.team.map(t => (
+                        <div key={t} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <Avatar initials={t} size={28} />
+                          <span style={{ fontSize: 11, color: DARK_TEXT, fontWeight: 600 }}>{t}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Dates */}
+                  <div style={{ background: PAGE_BG, borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 10 }}>Timeline</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: DARK_TEXT }}>
+                      <Calendar size={14} color={MUTED} />
+                      <span>{campaign.milestone}</span>
+                    </div>
+                  </div>
+
+                  {/* Description */}
+                  <div style={{ background: PAGE_BG, borderRadius: 10, padding: 14 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 8 }}>Description</div>
+                    <p style={{ fontSize: 12, color: MUTED, lineHeight: 1.6, margin: 0 }}>
+                      This campaign targets key enterprise verticals with a multi-channel approach combining paid media, content, and ABM. Goal is to drive qualified pipeline and MQL volume for {campaign.name}.
+                    </p>
+                  </div>
+
+                  {/* AI Flag */}
+                  {campaign.aiFlag && (
+                    <div style={{ background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 8, padding: "10px 12px", display: "flex", gap: 8, alignItems: "flex-start" }}>
+                      <AlertTriangle size={14} color={RED} style={{ flexShrink: 0, marginTop: 1 }} />
+                      <span style={{ fontSize: 12, color: RED }}>{campaign.aiFlag}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* ── Assets Tab ── */}
+              {activeTab === "Assets" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK_TEXT, marginBottom: 4 }}>Campaign Assets</div>
+                  {assets.map(asset => (
+                    <div key={asset.name} style={{
+                      background: PAGE_BG, border: `1px solid ${BORDER}`, borderRadius: 10,
+                      padding: "14px 16px", display: "flex", justifyContent: "space-between", alignItems: "center",
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{ width: 36, height: 36, borderRadius: 8, background: `${PRIMARY}15`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <FileText size={16} color={PRIMARY} />
+                        </div>
+                        <div>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT }}>{asset.name}</div>
+                          <div style={{ fontSize: 10, color: MUTED }}>{asset.files}</div>
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{
+                          fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 6,
+                          background: asset.status === "Ready" ? `${GREEN}15` : `${AMBER}15`,
+                          color: asset.status === "Ready" ? GREEN : AMBER,
+                        }}>{asset.status}</span>
+                        <button style={{
+                          background: "transparent", border: `1px solid ${BORDER}`, borderRadius: 7,
+                          padding: "5px 10px", fontSize: 11, fontWeight: 600, color: DARK_TEXT, cursor: "pointer",
+                          display: "flex", alignItems: "center", gap: 4,
+                        }}>
+                          <Download size={11} /> Download
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Timeline Tab ── */}
+              {activeTab === "Timeline" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK_TEXT, marginBottom: 12 }}>Campaign Milestones</div>
+                  {timelineMilestones.map((m, i) => (
+                    <div key={m.label} style={{ display: "flex", gap: 12, alignItems: "flex-start", paddingBottom: 16, position: "relative" }}>
+                      {/* Connector line */}
+                      {i < timelineMilestones.length - 1 && (
+                        <div style={{
+                          position: "absolute", left: 14, top: 28, bottom: 0, width: 2,
+                          background: m.done ? GREEN : BORDER,
+                        }} />
+                      )}
+                      {/* Icon */}
+                      <div style={{
+                        width: 28, height: 28, borderRadius: "50%", flexShrink: 0,
+                        background: m.done ? GREEN : PAGE_BG,
+                        border: `2px solid ${m.done ? GREEN : BORDER}`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }}>
+                        {m.done
+                          ? <CheckCircle size={14} color="#fff" />
+                          : <Clock size={12} color={MUTED} />
+                        }
+                      </div>
+                      <div style={{ paddingTop: 4 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: m.done ? DARK_TEXT : MUTED }}>{m.label}</div>
+                        <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>
+                          {m.done ? "✓ " : "→ "}{m.date}{m.status ? ` (${m.status})` : ""}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Team Tab ── */}
+              {activeTab === "Team" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK_TEXT, marginBottom: 4 }}>Team Members</div>
+                  {teamMembers.map(member => (
+                    <div key={member.name} style={{
+                      background: PAGE_BG, border: `1px solid ${BORDER}`, borderRadius: 10,
+                      padding: "14px 16px",
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 10 }}>
+                        <Avatar initials={member.initials} size={36} />
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: DARK_TEXT }}>{member.name}</div>
+                          <div style={{ fontSize: 11, color: MUTED }}>{member.role}</div>
+                        </div>
+                      </div>
+                      <div>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: MUTED, marginBottom: 4 }}>
+                          <span>Capacity</span><span style={{ color: member.capacity > 80 ? RED : member.capacity > 60 ? AMBER : GREEN }}>{member.capacity}%</span>
+                        </div>
+                        <ProgressBar pct={member.capacity} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* ── Performance Tab ── */}
+              {activeTab === "Performance" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK_TEXT }}>Performance Metrics</div>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 12 }}>
+                    {perfMetrics.map(m => (
+                      <div key={m.label} style={{
+                        background: PAGE_BG, border: `1px solid ${BORDER}`, borderRadius: 10,
+                        padding: "14px 16px",
+                      }}>
+                        <div style={{ fontSize: 11, color: MUTED, marginBottom: 4 }}>{m.label}</div>
+                        <div style={{ fontSize: 22, fontWeight: 800, color: m.color }}>{m.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{
+                    background: `${GREEN}08`, border: `1px solid ${GREEN}30`, borderRadius: 10,
+                    padding: "12px 16px", display: "flex", alignItems: "center", gap: 10,
+                  }}>
+                    <TrendingUp size={18} color={GREEN} />
+                    <span style={{ fontSize: 12, fontWeight: 600, color: GREEN }}>
+                      Campaign performing 12% above target ROAS
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Settings Tab ── */}
+              {activeTab === "Settings" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: DARK_TEXT }}>Campaign Settings</div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 6 }}>Campaign Name</label>
+                    <input
+                      value={settingsName}
+                      onChange={e => setSettingsName(e.target.value)}
+                      style={{
+                        width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`,
+                        borderRadius: 8, padding: "9px 12px", fontSize: 13, color: DARK_TEXT,
+                        outline: "none", boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 8 }}>Status</label>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      {(["Active", "Paused"] as const).map(s => (
+                        <button
+                          key={s}
+                          onClick={() => setSettingsStatus(s)}
+                          style={{
+                            flex: 1, padding: "8px 0", borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                            background: settingsStatus === s ? (s === "Active" ? GREEN : AMBER) : "transparent",
+                            color: settingsStatus === s ? "#fff" : MUTED,
+                            border: `1.5px solid ${settingsStatus === s ? (s === "Active" ? GREEN : AMBER) : BORDER}`,
+                            transition: "all 0.2s",
+                          }}
+                        >
+                          {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 6 }}>Budget</label>
+                    <input
+                      value={settingsBudget}
+                      onChange={e => setSettingsBudget(e.target.value)}
+                      style={{
+                        width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`,
+                        borderRadius: 8, padding: "9px 12px", fontSize: 13, color: DARK_TEXT,
+                        outline: "none", boxSizing: "border-box",
+                      }}
+                    />
+                  </div>
+
+                  <button style={{
+                    background: "transparent", border: `1.5px solid ${RED}`, color: RED,
+                    borderRadius: 9, padding: "10px 0", fontSize: 12, fontWeight: 700, cursor: "pointer",
+                    marginTop: 8,
+                  }}>
+                    Archive Campaign
+                  </button>
+                </div>
+              )}
+
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    </>
+  );
+}
+
+// ─── New Campaign Modal ───────────────────────────────────────────────────────
+function NewCampaignModal({ onClose }: { onClose: () => void }) {
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState(false);
+  const [form, setForm] = useState({
+    name: "", type: "Product Launch", owner: "Sarah Chen",
+    budget: "", goal: "Revenue", startDate: "", endDate: "",
+  });
+
+  function handleCreate() {
+    if (!form.name) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setToast(true);
+      setTimeout(() => {
+        setToast(false);
+        onClose();
+      }, 1600);
+    }, 2000);
+  }
+
+  function setField(key: string, value: string) {
+    setForm(prev => ({ ...prev, [key]: value }));
+  }
+
+  return (
+    <>
+      <motion.div
+        key="modal-backdrop"
+        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+        onClick={onClose}
+        style={{ position: "fixed", inset: 0, zIndex: 300, background: "rgba(0,0,0,0.4)", backdropFilter: "blur(2px)" }}
+      />
+      <motion.div
+        key="modal-panel"
+        initial={{ opacity: 0, scale: 0.96, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96, y: 10 }}
+        transition={{ type: "spring", stiffness: 300, damping: 28 }}
+        style={{
+          position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+          width: 480, zIndex: 301, background: "#fff", borderRadius: 16,
+          boxShadow: "0 24px 64px rgba(0,0,0,0.2)", overflow: "hidden",
+        }}
+      >
+        {/* Modal Header */}
+        <div style={{ padding: "20px 24px 16px", borderBottom: `1px solid ${BORDER}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 17, fontWeight: 800, color: DARK_TEXT }}>Create New Campaign</div>
+            <div style={{ fontSize: 11, color: MUTED, marginTop: 2 }}>Set up a new campaign in Campaign OS</div>
+          </div>
+          <button onClick={onClose} style={{ background: "transparent", border: `1px solid ${BORDER}`, borderRadius: 8, width: 32, height: 32, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <X size={15} color={MUTED} />
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
+          {/* Campaign Name */}
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 5 }}>Campaign Name</label>
+            <input
+              value={form.name}
+              onChange={e => setField("name", e.target.value)}
+              placeholder="e.g. BFSI Q3 ABM Push"
+              style={{
+                width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`,
+                borderRadius: 8, padding: "9px 12px", fontSize: 12, color: DARK_TEXT,
+                outline: "none", boxSizing: "border-box",
+              }}
+            />
+          </div>
+
+          {/* Type + Owner row */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 5 }}>Type</label>
+              <div style={{ position: "relative" }}>
+                <select value={form.type} onChange={e => setField("type", e.target.value)} style={{ width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "9px 12px", fontSize: 12, color: DARK_TEXT, outline: "none", appearance: "none", cursor: "pointer", boxSizing: "border-box" }}>
+                  <option>Product Launch</option>
+                  <option>ABM</option>
+                  <option>Content Drive</option>
+                  <option>Event</option>
+                </select>
+                <ChevronDown size={12} color={MUTED} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 5 }}>Owner</label>
+              <div style={{ position: "relative" }}>
+                <select value={form.owner} onChange={e => setField("owner", e.target.value)} style={{ width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "9px 12px", fontSize: 12, color: DARK_TEXT, outline: "none", appearance: "none", cursor: "pointer", boxSizing: "border-box" }}>
+                  <option>Sarah Chen</option>
+                  <option>Emily Watson</option>
+                  <option>David Kim</option>
+                  <option>Priya Sharma</option>
+                </select>
+                <ChevronDown size={12} color={MUTED} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Budget + Goal row */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 5 }}>Budget ($)</label>
+              <input
+                value={form.budget}
+                onChange={e => setField("budget", e.target.value)}
+                placeholder="e.g. 85000"
+                style={{
+                  width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`,
+                  borderRadius: 8, padding: "9px 12px", fontSize: 12, color: DARK_TEXT,
+                  outline: "none", boxSizing: "border-box",
+                }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 5 }}>Goal</label>
+              <div style={{ position: "relative" }}>
+                <select value={form.goal} onChange={e => setField("goal", e.target.value)} style={{ width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "9px 12px", fontSize: 12, color: DARK_TEXT, outline: "none", appearance: "none", cursor: "pointer", boxSizing: "border-box" }}>
+                  <option>Revenue</option>
+                  <option>Pipeline</option>
+                  <option>Awareness</option>
+                </select>
+                <ChevronDown size={12} color={MUTED} style={{ position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Dates row */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 5 }}>Start Date</label>
+              <input
+                type="date"
+                value={form.startDate}
+                onChange={e => setField("startDate", e.target.value)}
+                style={{
+                  width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`,
+                  borderRadius: 8, padding: "9px 12px", fontSize: 12, color: DARK_TEXT,
+                  outline: "none", boxSizing: "border-box", cursor: "pointer",
+                }}
+              />
+            </div>
+            <div>
+              <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 5 }}>End Date</label>
+              <input
+                type="date"
+                value={form.endDate}
+                onChange={e => setField("endDate", e.target.value)}
+                style={{
+                  width: "100%", background: PAGE_BG, border: `1px solid ${BORDER}`,
+                  borderRadius: 8, padding: "9px 12px", fontSize: 12, color: DARK_TEXT,
+                  outline: "none", boxSizing: "border-box", cursor: "pointer",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div style={{ padding: "14px 24px 20px", borderTop: `1px solid ${BORDER}`, display: "flex", gap: 10 }}>
+          <button onClick={onClose} style={{
+            flex: 1, background: "transparent", border: `1.5px solid ${BORDER}`,
+            borderRadius: 9, padding: "10px 0", fontSize: 13, fontWeight: 600, color: MUTED, cursor: "pointer",
+          }}>
+            Cancel
+          </button>
+          <motion.button
+            onClick={handleCreate}
+            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+            disabled={loading}
+            style={{
+              flex: 2, background: loading ? MUTED : PRIMARY, color: "#fff", border: "none",
+              borderRadius: 9, padding: "10px 0", fontSize: 13, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 7,
+            }}
+          >
+            {loading ? (
+              <>
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}>
+                  <RefreshCcw size={14} />
+                </motion.div>
+                Creating…
+              </>
+            ) : (
+              <><Plus size={14} /> Create Campaign</>
+            )}
+          </motion.button>
+        </div>
+
+        {/* Toast */}
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}
+              style={{
+                position: "absolute", bottom: 76, left: "50%", transform: "translateX(-50%)",
+                background: GREEN, color: "#fff", borderRadius: 10, padding: "10px 20px",
+                fontSize: 12, fontWeight: 600, whiteSpace: "nowrap",
+                display: "flex", alignItems: "center", gap: 8,
+                boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+              }}
+            >
+              <CheckCircle size={14} /> Campaign created! Opening in planner…
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </>
+  );
+}
+
 // ─── Campaign Card ────────────────────────────────────────────────────────────
-function CampaignCard({ c }: { c: typeof campaigns[0] }) {
+function CampaignCard({ c, onClick }: { c: typeof campaigns[0]; onClick?: () => void }) {
   const borderColor = c.risk === "high" ? RED : c.risk === "medium" ? AMBER : GREEN;
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
+      onClick={onClick}
       style={{
         background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12,
         borderLeft: `4px solid ${borderColor}`, padding: 18, cursor: "pointer",
@@ -483,25 +1103,40 @@ const calendarDots: Record<number, { name: string; color: string }[]> = {
 // ─── Tab: Overview ────────────────────────────────────────────────────────────
 function OverviewTab() {
   const [viewMode, setViewMode] = useState<"List" | "Kanban" | "Gantt" | "Calendar">("List");
+  const [slideoutCampaign, setSlideoutCampaign] = useState<typeof campaigns[0] | null>(null);
+  const [showNewModal, setShowNewModal] = useState(false);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      {/* View toggle */}
-      <div style={{ display: "flex", gap: 4, marginBottom: 20, background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 4, width: "fit-content" }}>
-        {(["List", "Kanban", "Gantt", "Calendar"] as const).map(mode => (
-          <button
-            key={mode}
-            onClick={() => setViewMode(mode)}
-            style={{
-              padding: "6px 14px", borderRadius: 7, fontSize: 12, fontWeight: 600,
-              cursor: "pointer", border: "none", transition: "all 0.18s",
-              background: viewMode === mode ? PRIMARY : "transparent",
-              color: viewMode === mode ? "#fff" : MUTED,
-            }}
-          >
-            {mode}
-          </button>
-        ))}
+      {/* Header row with view toggle and + New Campaign */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div style={{ display: "flex", gap: 4, background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: 4 }}>
+          {(["List", "Kanban", "Gantt", "Calendar"] as const).map(mode => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              style={{
+                padding: "6px 14px", borderRadius: 7, fontSize: 12, fontWeight: 600,
+                cursor: "pointer", border: "none", transition: "all 0.18s",
+                background: viewMode === mode ? PRIMARY : "transparent",
+                color: viewMode === mode ? "#fff" : MUTED,
+              }}
+            >
+              {mode}
+            </button>
+          ))}
+        </div>
+        <motion.button
+          onClick={() => setShowNewModal(true)}
+          whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
+          style={{
+            background: PRIMARY, color: "#fff", border: "none",
+            borderRadius: 9, padding: "8px 16px", fontSize: 12, fontWeight: 700, cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 6,
+          }}
+        >
+          <Plus size={14} /> New Campaign
+        </motion.button>
       </div>
 
       {/* List view */}
@@ -509,7 +1144,7 @@ function OverviewTab() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
           {campaigns.map((c, i) => (
             <motion.div key={c.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-              <CampaignCard c={c} />
+              <CampaignCard c={c} onClick={() => setSlideoutCampaign(c)} />
             </motion.div>
           ))}
         </div>
@@ -536,7 +1171,7 @@ function OverviewTab() {
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {colCampaigns.map((c, i) => (
                     <motion.div key={c.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}>
-                      <CampaignCard c={c} />
+                      <CampaignCard c={c} onClick={() => setSlideoutCampaign(c)} />
                     </motion.div>
                   ))}
                   {colCampaigns.length === 0 && (
@@ -550,6 +1185,20 @@ function OverviewTab() {
           })}
         </div>
       )}
+
+      {/* Slideout */}
+      <AnimatePresence>
+        {slideoutCampaign && (
+          <CampaignSlideout campaign={slideoutCampaign} onClose={() => setSlideoutCampaign(null)} />
+        )}
+      </AnimatePresence>
+
+      {/* New Campaign Modal */}
+      <AnimatePresence>
+        {showNewModal && (
+          <NewCampaignModal onClose={() => setShowNewModal(false)} />
+        )}
+      </AnimatePresence>
 
       {/* Gantt view */}
       {viewMode === "Gantt" && (

@@ -27,6 +27,13 @@ import {
   Users,
   Tag,
   X,
+  Play,
+  Pause,
+  FlaskConical,
+  Monitor,
+  Tablet,
+  Smartphone,
+  ChevronDown,
 } from "lucide-react";
 
 // ─── Brand Colors ──────────────────────────────────────────────────────────────
@@ -44,8 +51,8 @@ const C = {
 };
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
-type SubTab = "Request Queue" | "Asset Library" | "AI Asset Generator" | "Brand Guidelines" | "Templates";
-const SUB_TABS: SubTab[] = ["Request Queue", "Asset Library", "AI Asset Generator", "Brand Guidelines", "Templates"];
+type SubTab = "Request Queue" | "Asset Library" | "AI Asset Generator" | "Brand Guidelines" | "Templates" | "A/B Test Manager";
+const SUB_TABS: SubTab[] = ["Request Queue", "Asset Library", "AI Asset Generator", "Brand Guidelines", "Templates", "A/B Test Manager"];
 
 type Priority = "High" | "Medium" | "Low";
 type KanbanCol = "Backlog" | "In Progress" | "Review" | "Done";
@@ -446,6 +453,8 @@ function AIAssetGenerator() {
   const [format, setFormat] = useState("LinkedIn Banner (1200×628)");
   const [loading, setLoading] = useState(false);
   const [generated, setGenerated] = useState(false);
+  const [previewDevice, setPreviewDevice] = useState<"Desktop" | "Tablet" | "Mobile">("Desktop");
+  const [selectedPreview, setSelectedPreview] = useState(0);
 
   const styles = ["Professional", "Bold", "Minimal", "Warm"];
   const formats = ["LinkedIn Banner (1200×628)", "Facebook Post", "Twitter Header", "Email Header", "Blog Hero", "Square (1:1)"];
@@ -540,12 +549,16 @@ function AIAssetGenerator() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              style={{ background: C.CARD, borderRadius: 14, padding: 20, border: `1px solid ${C.BORDER}` }}
+              style={{ background: C.CARD, borderRadius: 14, padding: 20, border: `1px solid ${C.BORDER}`, marginBottom: 20 }}
             >
               <h4 style={{ fontWeight: 700, fontSize: 14, color: C.DARK_TEXT, marginBottom: 14 }}>Generated Previews</h4>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-                {GENERATED_PREVIEWS.map((g) => (
-                  <div key={g.id} style={{ borderRadius: 10, overflow: "hidden", border: `1px solid ${C.BORDER}` }}>
+                {GENERATED_PREVIEWS.map((g, idx) => (
+                  <div
+                    key={g.id}
+                    onClick={() => setSelectedPreview(idx)}
+                    style={{ borderRadius: 10, overflow: "hidden", border: `2px solid ${selectedPreview === idx ? C.PRIMARY : C.BORDER}`, cursor: "pointer" }}
+                  >
                     <div style={{ height: 90, background: g.color, display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <span style={{ color: "rgba(255,255,255,0.6)", fontSize: 12, fontWeight: 600 }}>{format.split(" ")[0]}</span>
                     </div>
@@ -558,6 +571,75 @@ function AIAssetGenerator() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Preview Canvas */}
+        <AnimatePresence>
+          {generated && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              style={{ background: C.CARD, borderRadius: 14, padding: 20, border: `1px solid ${C.BORDER}` }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+                <h4 style={{ fontWeight: 700, fontSize: 14, color: C.DARK_TEXT }}>Preview Canvas</h4>
+                <div style={{ display: "flex", gap: 6 }}>
+                  {(["Desktop", "Tablet", "Mobile"] as const).map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => setPreviewDevice(d)}
+                      style={{
+                        display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 99, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                        background: previewDevice === d ? C.PRIMARY : C.CARD,
+                        color: previewDevice === d ? "#fff" : C.MUTED,
+                        border: `1px solid ${previewDevice === d ? C.PRIMARY : C.BORDER}`,
+                      }}
+                    >
+                      {d === "Desktop" && <Monitor size={12} />}
+                      {d === "Tablet" && <Tablet size={12} />}
+                      {d === "Mobile" && <Smartphone size={12} />}
+                      {d}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "20px 0" }}>
+                {(() => {
+                  const dims = previewDevice === "Desktop" ? { w: 400, h: 200 } : previewDevice === "Tablet" ? { w: 280, h: 200 } : { w: 140, h: 200 };
+                  const previewColor = GENERATED_PREVIEWS[selectedPreview].color;
+                  return (
+                    <>
+                      <div
+                        style={{
+                          width: dims.w, height: dims.h, borderRadius: previewDevice === "Mobile" ? 16 : 10,
+                          border: `2px solid ${C.BORDER}`, overflow: "hidden", boxShadow: "0 4px 16px rgba(58,31,14,0.1)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                          background: previewColor,
+                        }}
+                      >
+                        <span style={{ color: "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: 600 }}>
+                          {GENERATED_PREVIEWS[selectedPreview].label}
+                        </span>
+                      </div>
+                      <p style={{ fontSize: 11, color: C.MUTED, marginTop: 10 }}>
+                        {dims.w}×{dims.h}px · {previewDevice} view
+                      </p>
+                      <button
+                        style={{
+                          marginTop: 10, display: "flex", alignItems: "center", gap: 6,
+                          background: C.PRIMARY, color: "#fff", border: "none", borderRadius: 8,
+                          padding: "7px 18px", fontSize: 12, fontWeight: 600, cursor: "pointer",
+                        }}
+                      >
+                        <Download size={13} /> Download PNG
+                      </button>
+                    </>
+                  );
+                })()}
               </div>
             </motion.div>
           )}
@@ -754,9 +836,263 @@ function TemplatesTab() {
   );
 }
 
+// ─── Tab: A/B Test Manager ─────────────────────────────────────────────────────
+function ABTestManager() {
+  const [toast, setToast] = useState<string | null>(null);
+  const [winnerApplied, setWinnerApplied] = useState(false);
+  const [newTest, setNewTest] = useState({ name: "", variantA: "", variantB: "" });
+  const [split, setSplit] = useState("50/50");
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  const handleApplyWinner = () => {
+    showToast("Applying Winner A to LinkedIn Banner Q3 campaign…");
+    setTimeout(() => setWinnerApplied(true), 1000);
+  };
+
+  const statusColor = (s: string) => s === "Running" ? C.GREEN : s === "Paused" ? C.AMBER : C.BLUE;
+  const statusBg = (s: string) => s === "Running" ? "rgba(45,122,61,0.1)" : s === "Paused" ? "rgba(217,119,6,0.1)" : "rgba(37,99,235,0.1)";
+
+  const barData = [
+    { metric: "Impressions", a: 42000, b: 38000, aLabel: "42K", bLabel: "38K", max: 42000 },
+    { metric: "Clicks", a: 1764, b: 1178, aLabel: "1,764", bLabel: "1,178", max: 1764 },
+    { metric: "CTR", a: 4.2, b: 3.1, aLabel: "4.2%", bLabel: "3.1%", max: 4.2 },
+  ];
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+      {/* Active Tests */}
+      <div style={{ background: C.CARD, borderRadius: 14, padding: 22, border: `1px solid ${C.BORDER}` }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+          <FlaskConical size={16} color={C.PRIMARY} />
+          <h3 style={{ fontWeight: 700, fontSize: 15, color: C.DARK_TEXT }}>Active Tests</h3>
+        </div>
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <thead>
+              <tr style={{ borderBottom: `1px solid ${C.BORDER}` }}>
+                {["Test Name", "Variant A", "Variant B", "Traffic Split", "Status", "Results", "Action"].map((h) => (
+                  <th key={h} style={{ padding: "8px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: C.MUTED, whiteSpace: "nowrap" }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {/* Row 1 */}
+              <tr style={{ borderBottom: `1px solid ${C.BORDER}` }}>
+                <td style={{ padding: "12px 12px", fontWeight: 600, color: C.DARK_TEXT }}>LinkedIn Banner Q3</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>Bold CTA</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>Subtle CTA</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>50/50</td>
+                <td style={{ padding: "12px 12px" }}>
+                  <span style={{ background: statusBg("Running"), color: statusColor("Running"), fontSize: 11, padding: "3px 10px", borderRadius: 99, fontWeight: 600 }}>Running</span>
+                </td>
+                <td style={{ padding: "12px 12px" }}>
+                  <div style={{ fontSize: 11, color: C.DARK_TEXT }}>
+                    <span style={{ color: C.PRIMARY, fontWeight: 600 }}>A: 4.2% CTR</span><br />
+                    <span style={{ color: C.BLUE }}>B: 3.1% CTR</span>
+                  </div>
+                </td>
+                <td style={{ padding: "12px 12px" }}>
+                  {winnerApplied ? (
+                    <span style={{ fontSize: 12, color: C.GREEN, fontWeight: 600, display: "flex", alignItems: "center", gap: 4 }}>
+                      <CheckCircle size={13} /> Applied A ✓
+                    </span>
+                  ) : (
+                    <button
+                      onClick={handleApplyWinner}
+                      style={{ background: C.PRIMARY, color: "#fff", border: "none", borderRadius: 7, padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}
+                    >
+                      Apply Winner A
+                    </button>
+                  )}
+                </td>
+              </tr>
+              {/* Row 2 */}
+              <tr style={{ borderBottom: `1px solid ${C.BORDER}` }}>
+                <td style={{ padding: "12px 12px", fontWeight: 600, color: C.DARK_TEXT }}>Email Header Spring</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>Product Focus</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>Lifestyle</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>60/40</td>
+                <td style={{ padding: "12px 12px" }}>
+                  <span style={{ background: statusBg("Complete"), color: statusColor("Complete"), fontSize: 11, padding: "3px 10px", borderRadius: 99, fontWeight: 600 }}>Complete</span>
+                </td>
+                <td style={{ padding: "12px 12px" }}>
+                  <div style={{ fontSize: 11 }}>
+                    <span style={{ color: C.MUTED }}>A: 28% OR</span><br />
+                    <span style={{ color: C.BLUE, fontWeight: 600 }}>B: 31% OR</span>
+                  </div>
+                </td>
+                <td style={{ padding: "12px 12px" }}>
+                  <button
+                    disabled
+                    style={{ background: "rgba(45,122,61,0.12)", color: C.GREEN, border: "none", borderRadius: 7, padding: "6px 12px", fontSize: 12, fontWeight: 600, cursor: "default", whiteSpace: "nowrap" }}
+                  >
+                    Applied B ✓
+                  </button>
+                </td>
+              </tr>
+              {/* Row 3 */}
+              <tr>
+                <td style={{ padding: "12px 12px", fontWeight: 600, color: C.DARK_TEXT }}>Ad Creative BFSI</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>Enterprise</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>ROI Focus</td>
+                <td style={{ padding: "12px 12px", color: C.MUTED }}>50/50</td>
+                <td style={{ padding: "12px 12px" }}>
+                  <span style={{ background: statusBg("Paused"), color: statusColor("Paused"), fontSize: 11, padding: "3px 10px", borderRadius: 99, fontWeight: 600 }}>Paused</span>
+                </td>
+                <td style={{ padding: "12px 12px" }}>
+                  <div style={{ fontSize: 11 }}>
+                    <span style={{ color: C.MUTED }}>A: 2.8% CTR</span><br />
+                    <span style={{ color: C.BLUE, fontWeight: 600 }}>B: 3.4% CTR</span>
+                  </div>
+                </td>
+                <td style={{ padding: "12px 12px" }}>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <button style={{ background: C.AMBER, color: "#fff", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                      <Play size={11} /> Resume
+                    </button>
+                    <button style={{ background: C.BLUE, color: "#fff", border: "none", borderRadius: 7, padding: "5px 10px", fontSize: 11, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap" }}>
+                      Apply B
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Create New Test */}
+      <div style={{ background: C.CARD, borderRadius: 14, padding: 22, border: `1px solid ${C.BORDER}` }}>
+        <h3 style={{ fontWeight: 700, fontSize: 15, color: C.DARK_TEXT, marginBottom: 16 }}>Create New Test</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: C.MUTED, display: "block", marginBottom: 5 }}>Test Name</label>
+            <input
+              placeholder="e.g. Q4 Campaign Banner Test"
+              value={newTest.name}
+              onChange={(e) => setNewTest((t) => ({ ...t, name: e.target.value }))}
+              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.BORDER}`, background: "#fff", fontSize: 13, color: C.DARK_TEXT, boxSizing: "border-box" }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: C.MUTED, display: "block", marginBottom: 5 }}>Variant A Description</label>
+            <input
+              placeholder="e.g. Bold CTA headline"
+              value={newTest.variantA}
+              onChange={(e) => setNewTest((t) => ({ ...t, variantA: e.target.value }))}
+              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.BORDER}`, background: "#fff", fontSize: 13, color: C.DARK_TEXT, boxSizing: "border-box" }}
+            />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: C.MUTED, display: "block", marginBottom: 5 }}>Variant B Description</label>
+            <input
+              placeholder="e.g. Minimal lifestyle imagery"
+              value={newTest.variantB}
+              onChange={(e) => setNewTest((t) => ({ ...t, variantB: e.target.value }))}
+              style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.BORDER}`, background: "#fff", fontSize: 13, color: C.DARK_TEXT, boxSizing: "border-box" }}
+            />
+          </div>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: C.MUTED, display: "block", marginBottom: 8 }}>Traffic Split</label>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              {["50/50", "60/40", "70/30"].map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => setSplit(opt)}
+                  style={{
+                    padding: "5px 16px", borderRadius: 99, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                    background: split === opt ? C.PRIMARY : C.CARD,
+                    color: split === opt ? "#fff" : C.MUTED,
+                    border: `1px solid ${split === opt ? C.PRIMARY : C.BORDER}`,
+                  }}
+                >
+                  {opt}
+                </button>
+              ))}
+              <span style={{ fontSize: 12, color: C.MUTED }}>Selected: <strong style={{ color: C.PRIMARY }}>{split}</strong></span>
+            </div>
+          </div>
+          <div style={{ gridColumn: "1 / -1" }}>
+            <button
+              style={{ background: C.PRIMARY, color: "#fff", border: "none", borderRadius: 8, padding: "10px 24px", fontSize: 13, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}
+            >
+              <FlaskConical size={15} /> Start A/B Test
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Results Charts */}
+      <div style={{ background: C.CARD, borderRadius: 14, padding: 22, border: `1px solid ${C.BORDER}` }}>
+        <h3 style={{ fontWeight: 700, fontSize: 15, color: C.DARK_TEXT, marginBottom: 4 }}>Results — LinkedIn Banner Q3</h3>
+        <p style={{ fontSize: 12, color: C.MUTED, marginBottom: 18 }}>Running · 50/50 split · A leads with 4.2% CTR vs 3.1%</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          {barData.map((row) => (
+            <div key={row.metric}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: C.DARK_TEXT, marginBottom: 8 }}>{row.metric}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ width: 14, fontSize: 11, color: C.PRIMARY, fontWeight: 700 }}>A</span>
+                  <div style={{ flex: 1, background: "hsl(36,25%,90%)", borderRadius: 99, height: 14, overflow: "hidden" }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(row.a / row.max) * 100}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      style={{ height: "100%", background: C.PRIMARY, borderRadius: 99 }}
+                    />
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: C.PRIMARY, minWidth: 48, textAlign: "right" }}>{row.aLabel}</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{ width: 14, fontSize: 11, color: C.BLUE, fontWeight: 700 }}>B</span>
+                  <div style={{ flex: 1, background: "hsl(36,25%,90%)", borderRadius: 99, height: 14, overflow: "hidden" }}>
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${(row.b / row.max) * 100}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut", delay: 0.1 }}
+                      style={{ height: "100%", background: C.BLUE, borderRadius: 99 }}
+                    />
+                  </div>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: C.BLUE, minWidth: 48, textAlign: "right" }}>{row.bLabel}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 30 }}
+            style={{
+              position: "fixed", bottom: 32, left: "50%", transform: "translateX(-50%)",
+              background: C.PRIMARY, color: "#fff", padding: "12px 24px", borderRadius: 10,
+              fontSize: 13, fontWeight: 600, zIndex: 200, boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
+              display: "flex", alignItems: "center", gap: 10,
+            }}
+          >
+            <CheckCircle size={15} /> {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // ─── Main Page ─────────────────────────────────────────────────────────────────
+const CAMPAIGNS = ["All Campaigns", "BFSI Vertical Launch", "LinkedIn ABM Enterprise", "AWS Partnership", "OGI Whitepaper", "Agentic OS APAC"];
+
 export default function CreativeHubPage() {
   const [activeTab, setActiveTab] = useState<SubTab>("Request Queue");
+  const [activeCampaign, setActiveCampaign] = useState("All Campaigns");
 
   const tabContent: Record<SubTab, React.ReactNode> = {
     "Request Queue": <RequestQueue />,
@@ -764,17 +1100,34 @@ export default function CreativeHubPage() {
     "AI Asset Generator": <AIAssetGenerator />,
     "Brand Guidelines": <BrandGuidelines />,
     Templates: <TemplatesTab />,
+    "A/B Test Manager": <ABTestManager />,
   };
 
   return (
     <div style={{ minHeight: "100vh", background: C.PAGE_BG, padding: "28px 32px" }}>
       {/* Page header */}
       <div style={{ marginBottom: 24 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
-          <div style={{ background: C.PRIMARY, borderRadius: 10, padding: 8 }}>
-            <Palette size={20} color="#fff" />
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ background: C.PRIMARY, borderRadius: 10, padding: 8 }}>
+              <Palette size={20} color="#fff" />
+            </div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, color: C.DARK_TEXT }}>Creative Hub</h1>
           </div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: C.DARK_TEXT }}>Creative Hub</h1>
+          <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
+            <select
+              value={activeCampaign}
+              onChange={(e) => setActiveCampaign(e.target.value)}
+              style={{
+                background: C.CARD, border: `1px solid ${C.BORDER}`, borderRadius: 8,
+                padding: "6px 32px 6px 12px", fontSize: 13, color: C.DARK_TEXT, cursor: "pointer",
+                appearance: "none", WebkitAppearance: "none", fontWeight: 600, outline: "none",
+              }}
+            >
+              {CAMPAIGNS.map((c) => <option key={c}>{c}</option>)}
+            </select>
+            <ChevronDown size={13} style={{ position: "absolute", right: 10, pointerEvents: "none", color: C.MUTED }} />
+          </div>
         </div>
         <p style={{ color: C.MUTED, fontSize: 14 }}>Manage design assets, creative requests, and brand resources in one place.</p>
       </div>

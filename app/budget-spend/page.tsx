@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   DollarSign, TrendingUp, CheckCircle2,
-  Loader2, ChevronDown, X, BarChart3,
+  Loader2, ChevronDown, X, BarChart3, ChevronRight,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -196,6 +196,31 @@ export default function BudgetSpendPage() {
         <h1 style={{ fontSize: 28, fontWeight: 700, color: DARK_TEXT, margin: 0 }}>Budget &amp; Spend</h1>
         <p style={{ color: MUTED, marginTop: 4, fontSize: 14 }}>FY2026 budget intelligence, variance analysis &amp; reallocation</p>
       </motion.div>
+
+      {/* Workflow Banner — Budget Intelligence, Step 1 of 5 */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: "10px 16px", marginBottom: 20, flexWrap: "wrap" as const }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: MUTED, textTransform: "uppercase" as const, letterSpacing: "0.05em" }}>Workflow:</span>
+        {[
+          { label: "1. Audit", current: true },
+          { label: "2. Model", current: false },
+          { label: "3. Recommend", current: false },
+          { label: "4. Approve", current: false },
+          { label: "5. Reallocate", current: false },
+        ].map((step, i, arr) => (
+          <span key={step.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 12, fontWeight: step.current ? 700 : 400, color: step.current ? PRIMARY : MUTED }}>
+              {step.label}
+            </span>
+            {i < arr.length - 1 && <ChevronRight size={12} color={MUTED} />}
+          </span>
+        ))}
+        <a
+          href="/campaigns"
+          style={{ marginLeft: "auto", fontSize: 11, fontWeight: 600, color: "white", background: PRIMARY, borderRadius: 7, padding: "6px 12px", textDecoration: "none" }}
+        >
+          Go to Campaigns →
+        </a>
+      </div>
 
       {/* KPI Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginTop: 16, marginBottom: 16 }}>

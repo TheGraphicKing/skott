@@ -67,6 +67,15 @@ type Tab = "content" | "winloss" | "queue";
 
 export default function SalesEnablement() {
   const [tab, setTab] = useState<Tab>("content");
+  const [showContentReq, setShowContentReq] = useState(false);
+  const [reqSending, setReqSending] = useState(false);
+  const [reqDone, setReqDone] = useState(false);
+  const [reqForm, setReqForm] = useState({ company: "", asset: "Case Study", urgency: "High" });
+
+  function handleSendReq() {
+    setReqSending(true);
+    setTimeout(() => { setReqSending(false); setReqDone(true); setTimeout(() => { setReqDone(false); setShowContentReq(false); }, 2000); }, 2000);
+  }
 
   return (
     <div style={{ minHeight: "100vh", background: PAGE_BG, padding: "32px 40px", fontFamily: "inherit" }}>
@@ -79,15 +88,68 @@ export default function SalesEnablement() {
               Content performance, win/loss intelligence & deal support · Q2 FY2026
             </p>
           </div>
-          <button style={{
-            background: PRIMARY, color: "#fff", border: "none", borderRadius: 10,
-            padding: "10px 20px", fontWeight: 600, fontSize: 13, cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 6,
-          }}>
-            <Download size={14} /> Export Report
-          </button>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setShowContentReq(true)}
+              style={{ background: CARD, color: PRIMARY, border: `1px solid ${PRIMARY}`, borderRadius: 10, padding: "10px 18px", fontWeight: 600, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+            >
+              <ChevronRight size={14} /> Request Content for Deal
+            </button>
+            <button style={{ background: PRIMARY, color: "#fff", border: "none", borderRadius: 10, padding: "10px 20px", fontWeight: 600, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+              <Download size={14} /> Export Report
+            </button>
+          </div>
         </div>
       </motion.div>
+
+      {/* Workflow banner */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8, background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: "10px 16px", marginBottom: 20, flexWrap: "wrap" as const }}>
+        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.12em", color: MUTED, textTransform: "uppercase" as const, marginRight: 4 }}>Workflow</span>
+        {["1. Brief", "2. Research", "3. Draft", "4. Review", "5. Distribute"].map((step, i) => (
+          <span key={step} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            {i > 0 && <span style={{ color: MUTED, fontSize: 12 }}>›</span>}
+            <span style={{ fontSize: 12, fontWeight: i === 0 ? 700 : 400, color: i === 0 ? PRIMARY : MUTED }}>{step}</span>
+          </span>
+        ))}
+        <a href="/content-studio" style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 4, fontSize: 11, fontWeight: 600, color: "#fff", background: PRIMARY, border: "none", borderRadius: 7, padding: "6px 12px", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" as const }}>
+          Create Content in Studio →
+        </a>
+      </div>
+
+      {/* Content Request Modal */}
+      {showContentReq && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => setShowContentReq(false)}>
+          <div style={{ background: CARD, borderRadius: 16, padding: 28, width: 420, boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+              <h3 style={{ fontWeight: 700, fontSize: 17, color: DARK_TEXT, margin: 0 }}>Request Content for Deal</h3>
+              <button onClick={() => setShowContentReq(false)} style={{ background: "none", border: "none", cursor: "pointer", color: MUTED, fontSize: 18 }}>×</button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 4 }}>Target Company</label>
+                <input value={reqForm.company} onChange={e => setReqForm(f => ({ ...f, company: e.target.value }))} placeholder="e.g. Goldman Sachs" style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 13, color: DARK_TEXT, boxSizing: "border-box" as const }} />
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 4 }}>Asset Type</label>
+                <select value={reqForm.asset} onChange={e => setReqForm(f => ({ ...f, asset: e.target.value }))} style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${BORDER}`, fontSize: 13, color: DARK_TEXT }}>
+                  {["Case Study", "ROI Calculator", "Competitive Battlecard", "One-Pager", "Demo Script"].map(a => <option key={a}>{a}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 600, color: MUTED, display: "block", marginBottom: 4 }}>Urgency</label>
+                <div style={{ display: "flex", gap: 8 }}>
+                  {["High", "Medium", "Low"].map(u => (
+                    <button key={u} onClick={() => setReqForm(f => ({ ...f, urgency: u }))} style={{ flex: 1, padding: "7px", borderRadius: 8, border: `1px solid ${reqForm.urgency === u ? PRIMARY : BORDER}`, background: reqForm.urgency === u ? `${PRIMARY}15` : "transparent", color: reqForm.urgency === u ? PRIMARY : MUTED, fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{u}</button>
+                  ))}
+                </div>
+              </div>
+              <button onClick={handleSendReq} disabled={reqSending} style={{ padding: "11px", background: reqDone ? GREEN : PRIMARY, color: "#fff", border: "none", borderRadius: 8, fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
+                {reqSending ? "Sending to Content Studio…" : reqDone ? "✓ Request Sent!" : "Send to Content Studio"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* KPI Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginBottom: 32 }}>

@@ -6,7 +6,7 @@ import {
   DollarSign, TrendingUp, BarChart3, Target, Users,
   CheckCircle, AlertCircle, Plus, Edit, Trash2, Eye,
   ArrowUp, ArrowDown, RefreshCw, Download, Filter,
-  Activity, Share2, Clock,
+  Activity, Share2, Clock, ChevronRight,
 } from "lucide-react";
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
@@ -467,6 +467,31 @@ export default function PaidMediaPage() {
               May 2025
             </div>
           </div>
+        </div>
+
+        {/* Workflow Banner — Paid Media Performance Rescue, Step 1 of 5 */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10, padding: "10px 16px", marginBottom: 20, flexWrap: "wrap" as const, marginTop: 16 }}>
+          <span style={{ fontSize: 11, fontWeight: 600, color: MUTED, textTransform: "uppercase" as const, letterSpacing: "0.05em" }}>Workflow:</span>
+          {[
+            { label: "1. Diagnose", current: true },
+            { label: "2. Reallocate", current: false },
+            { label: "3. Optimize", current: false },
+            { label: "4. Monitor", current: false },
+            { label: "5. Report", current: false },
+          ].map((step, i, arr) => (
+            <span key={step.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 12, fontWeight: step.current ? 700 : 400, color: step.current ? PRIMARY : MUTED }}>
+                {step.label}
+              </span>
+              {i < arr.length - 1 && <ChevronRight size={12} color={MUTED} />}
+            </span>
+          ))}
+          <a
+            href="/budget-spend"
+            style={{ marginLeft: "auto", fontSize: 11, fontWeight: 600, color: "white", background: PRIMARY, borderRadius: 7, padding: "6px 12px", textDecoration: "none" }}
+          >
+            Go to Budget &amp; Spend →
+          </a>
         </div>
 
         {/* Sub-tabs */}

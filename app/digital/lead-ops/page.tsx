@@ -112,6 +112,32 @@ export default function LeadOpsPage() {
           </button>
         </div>
 
+        {/* Workflow Banner */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: 8,
+          background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10,
+          padding: "10px 16px", marginBottom: 20, flexWrap: "wrap",
+        }}>
+          <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.12em", color: MUTED, textTransform: "uppercase" }}>Workflow</span>
+          <span style={{ color: PRIMARY, fontWeight: 700, fontSize: 12 }}>1. Score</span>
+          <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+          <span style={{ color: MUTED, fontSize: 12 }}>2. Segment</span>
+          <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+          <span style={{ color: MUTED, fontSize: 12 }}>3. Nurture</span>
+          <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+          <span style={{ color: MUTED, fontSize: 12 }}>4. Route</span>
+          <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+          <span style={{ color: MUTED, fontSize: 12 }}>5. Handoff</span>
+          <a href="/email-crm" style={{
+            marginLeft: "auto", display: "flex", alignItems: "center", gap: 4,
+            fontSize: 11, fontWeight: 600, color: "#fff", background: PRIMARY,
+            border: "none", borderRadius: 7, padding: "6px 12px", cursor: "pointer",
+            textDecoration: "none", whiteSpace: "nowrap",
+          }}>
+            Continue to Email & CRM →
+          </a>
+        </div>
+
         {/* KPIs */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           {kpis.map((k, i) => (

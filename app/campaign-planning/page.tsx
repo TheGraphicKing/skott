@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   CheckCircle, AlertCircle, Brain, ChevronDown, ChevronUp,
-  Users, Rocket, Calendar,
+  Users, Rocket, Calendar, ChevronRight,
 } from "lucide-react";
 
 // ─── Design Tokens ────────────────────────────────────────────────────────────
@@ -945,6 +945,34 @@ export default function CampaignPlanningPage() {
           Strategic planning, budget allocation & campaign readiness
         </p>
       </motion.div>
+
+      {/* Workflow Banner */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 8,
+        background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10,
+        padding: "10px 16px", marginBottom: 20, flexWrap: "wrap",
+      }}>
+        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.12em", color: MUTED, textTransform: "uppercase" }}>Workflow</span>
+        <span style={{ color: PRIMARY, fontWeight: 700, fontSize: 12 }}>1. Plan</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>2. Content</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>3. Creative</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>4. Email</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>5. Social</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>6. Launch</span>
+        <a href="/content-studio" style={{
+          marginLeft: "auto", display: "flex", alignItems: "center", gap: 4,
+          fontSize: 11, fontWeight: 600, color: "#fff", background: PRIMARY,
+          border: "none", borderRadius: 7, padding: "6px 12px", cursor: "pointer",
+          textDecoration: "none", whiteSpace: "nowrap",
+        }}>
+          Continue to Content Studio →
+        </a>
+      </div>
 
       {/* Tab bar */}
       <div style={{

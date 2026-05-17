@@ -48,6 +48,13 @@ import {
   BookOpen,
   Link,
   LayoutTemplate,
+  X,
+  ChevronDown,
+  ChevronUp,
+  ShieldCheck,
+  AlertTriangle,
+  RotateCcw,
+  GitCompare,
 } from "lucide-react";
 
 // ─── Design tokens ─────────────────────────────────────────────────────────────
@@ -126,6 +133,404 @@ The final frontier: AI agents that synthesize cross-channel data and recommend s
 
 **The bottom line:** The marketing teams winning in 2026 aren't the largest — they're the ones that have embraced AI agents as force multipliers. The question is no longer whether to adopt, but how fast.`;
 
+// ─── A. PublishModal ──────────────────────────────────────────────────────────
+function PublishModal({ onClose }: { onClose: () => void }) {
+  const CHANNELS = [
+    { label: "Blog / CMS", icon: Globe },
+    { label: "LinkedIn", icon: Link2 },
+    { label: "X / Twitter", icon: Hash },
+    { label: "Email Newsletter", icon: Mail },
+  ];
+  const [enabled, setEnabled] = useState<Record<string, boolean>>({
+    "Blog / CMS": true, LinkedIn: true, "X / Twitter": true, "Email Newsletter": true,
+  });
+  const [schedule, setSchedule] = useState(false);
+  const [datetime, setDatetime] = useState("");
+  const [publishing, setPublishing] = useState(false);
+
+  const handlePublish = () => {
+    setPublishing(true);
+    setTimeout(() => { setPublishing(false); onClose(); }, 2000);
+  };
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center"
+        style={{ background: "rgba(0,0,0,0.45)" }}
+        onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.96, y: 16 }}
+          className="w-full max-w-md rounded-2xl p-6 flex flex-col gap-5 shadow-2xl"
+          style={{ background: CARD, border: `1px solid ${BORDER}` }}
+        >
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-bold" style={{ color: DARK_TEXT }}>Publish &amp; Distribute</h2>
+            <button onClick={onClose} className="p-1 rounded-lg" style={{ color: MUTED }}>
+              <X size={16} />
+            </button>
+          </div>
+
+          {/* Channel toggles */}
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-semibold" style={{ color: MUTED }}>Distribution Channels</p>
+            {CHANNELS.map(({ label, icon: Icon }) => (
+              <div
+                key={label}
+                className="flex items-center justify-between px-3 py-2.5 rounded-lg"
+                style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}` }}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon size={14} style={{ color: PRIMARY }} />
+                  <span className="text-sm font-medium" style={{ color: DARK_TEXT }}>{label}</span>
+                </div>
+                <button
+                  onClick={() => setEnabled((prev) => ({ ...prev, [label]: !prev[label] }))}
+                  className="relative w-9 h-5 rounded-full transition-colors"
+                  style={{ background: enabled[label] ? GREEN : BORDER }}
+                >
+                  <span
+                    className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform"
+                    style={{ transform: enabled[label] ? "translateX(17px)" : "translateX(2px)" }}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Schedule toggle */}
+          <div>
+            <div
+              className="flex items-center justify-between px-3 py-2.5 rounded-lg"
+              style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}` }}
+            >
+              <div className="flex items-center gap-2">
+                <Calendar size={14} style={{ color: PRIMARY }} />
+                <span className="text-sm font-medium" style={{ color: DARK_TEXT }}>Schedule</span>
+              </div>
+              <button
+                onClick={() => setSchedule(!schedule)}
+                className="relative w-9 h-5 rounded-full transition-colors"
+                style={{ background: schedule ? GREEN : BORDER }}
+              >
+                <span
+                  className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow-sm transition-transform"
+                  style={{ transform: schedule ? "translateX(17px)" : "translateX(2px)" }}
+                />
+              </button>
+            </div>
+            <AnimatePresence>
+              {schedule && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden mt-2"
+                >
+                  <input
+                    type="datetime-local"
+                    value={datetime}
+                    onChange={(e) => setDatetime(e.target.value)}
+                    className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+                    style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}`, color: DARK_TEXT }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Actions */}
+          <button
+            onClick={handlePublish}
+            disabled={publishing}
+            className="flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-opacity"
+            style={{ background: GREEN, color: "#fff", opacity: publishing ? 0.75 : 1 }}
+          >
+            {publishing ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
+            {publishing ? "Publishing…" : "Publish Now"}
+          </button>
+          <button onClick={onClose} className="text-center text-xs font-medium" style={{ color: MUTED }}>
+            Cancel
+          </button>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// ─── B. VersionHistoryDropdown ────────────────────────────────────────────────
+const VERSION_ENTRIES = [
+  { label: "v5 — Auto-save", time: "2 min ago" },
+  { label: "v4 — Auto-save", time: "18 min ago" },
+  { label: "v3 — Saved by AI", time: "1h ago" },
+  { label: "v2 — Draft checkpoint", time: "3h ago" },
+  { label: "v1 — Initial draft", time: "Yesterday" },
+];
+
+function VersionHistoryDropdown({ onToast }: { onToast: (msg: string) => void }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -6, scale: 0.97 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -6, scale: 0.97 }}
+      className="absolute top-full left-0 mt-2 z-30 w-72 rounded-xl shadow-xl overflow-hidden"
+      style={{ background: CARD, border: `1px solid ${BORDER}` }}
+    >
+      <div className="px-4 py-2.5 border-b" style={{ borderColor: BORDER }}>
+        <p className="text-xs font-semibold" style={{ color: DARK_TEXT }}>Version History</p>
+      </div>
+      {VERSION_ENTRIES.map((v) => (
+        <div
+          key={v.label}
+          className="flex items-center justify-between px-4 py-2.5 border-b hover:bg-[hsl(36,33%,95%)] transition-colors"
+          style={{ borderColor: BORDER }}
+        >
+          <div>
+            <p className="text-xs font-medium" style={{ color: DARK_TEXT }}>{v.label}</p>
+            <p className="text-[10px]" style={{ color: MUTED }}>{v.time}</p>
+          </div>
+          <div className="flex gap-1.5">
+            <button
+              onClick={() => onToast(`Draft restored from ${v.label}`)}
+              className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium"
+              style={{ background: `${PRIMARY}15`, color: PRIMARY }}
+            >
+              <RotateCcw size={10} /> Restore
+            </button>
+            <button
+              className="flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-medium"
+              style={{ background: `${MUTED}10`, color: MUTED }}
+            >
+              <GitCompare size={10} /> Compare
+            </button>
+          </div>
+        </div>
+      ))}
+    </motion.div>
+  );
+}
+
+// ─── C. AICommandMenu ─────────────────────────────────────────────────────────
+const AI_COMMANDS = [
+  { cmd: "/summarize", desc: "Summarize to 3 bullet points" },
+  { cmd: "/expand", desc: "Expand this section with examples" },
+  { cmd: "/simplify", desc: "Rewrite in plain language" },
+  { cmd: "/seo-optimize", desc: "Add SEO keywords and meta" },
+  { cmd: "/rewrite-bold", desc: "Make more bold and direct" },
+  { cmd: "/translate", desc: "Translate to another language" },
+  { cmd: "/add-cta", desc: "Generate strong call-to-action" },
+];
+
+function AICommandMenu({ query, onSelect }: { query: string; onSelect: (cmd: string) => void }) {
+  const filtered = AI_COMMANDS.filter((c) =>
+    c.cmd.toLowerCase().includes(query.toLowerCase()) || query === "/"
+  );
+  if (filtered.length === 0) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 4 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 4 }}
+      className="absolute bottom-full left-0 mb-1 z-30 w-full rounded-xl shadow-xl overflow-hidden"
+      style={{ background: CARD, border: `1px solid ${BORDER}` }}
+    >
+      {filtered.map(({ cmd, desc }) => (
+        <button
+          key={cmd}
+          onClick={() => onSelect(cmd)}
+          className="w-full flex items-center gap-3 px-3 py-2 text-left hover:bg-[hsl(36,33%,95%)] transition-colors border-b last:border-0"
+          style={{ borderColor: BORDER }}
+        >
+          <Sparkles size={12} style={{ color: PRIMARY, flexShrink: 0 }} />
+          <span className="text-xs font-semibold" style={{ color: PRIMARY }}>{cmd}</span>
+          <span className="text-xs" style={{ color: MUTED }}>{desc}</span>
+        </button>
+      ))}
+    </motion.div>
+  );
+}
+
+// ─── D. SEOScorePanel ─────────────────────────────────────────────────────────
+const SEO_ITEMS = [
+  { label: "Title Tag", score: 95 },
+  { label: "Meta Description", score: 78 },
+  { label: "Keyword Density", score: 82 },
+  { label: "Readability", score: 72 },
+  { label: "Internal Links", score: 60 },
+];
+
+const SEO_SUGGESTIONS = [
+  "Add primary keyword to H1",
+  "Increase meta description length",
+  "Add 2 more internal links",
+];
+
+function SEOScorePanel() {
+  const [resolved, setResolved] = useState<string[]>([]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 16 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 16 }}
+      className="flex flex-col gap-4 rounded-xl p-4"
+      style={{ width: 280, flexShrink: 0, background: CARD, border: `1px solid ${BORDER}` }}
+    >
+      {/* Overall score */}
+      <div className="flex flex-col items-center gap-1 py-3">
+        <p className="text-xs font-semibold" style={{ color: MUTED }}>SEO Score</p>
+        <p className="text-4xl font-bold" style={{ color: GREEN }}>84</p>
+        <p className="text-xs" style={{ color: MUTED }}>/100</p>
+      </div>
+
+      {/* Progress bars */}
+      <div className="flex flex-col gap-2.5">
+        {SEO_ITEMS.map(({ label, score }) => (
+          <div key={label}>
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[11px] font-medium" style={{ color: DARK_TEXT }}>{label}</span>
+              <span className="text-[11px] font-semibold" style={{ color: score >= 80 ? GREEN : score >= 65 ? AMBER : RED }}>{score}/100</span>
+            </div>
+            <div className="w-full h-1.5 rounded-full" style={{ background: BORDER }}>
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${score}%`, background: score >= 80 ? GREEN : score >= 65 ? AMBER : RED }}
+              />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Suggestions */}
+      <div>
+        <p className="text-[11px] font-semibold mb-2" style={{ color: DARK_TEXT }}>Suggestions</p>
+        <div className="flex flex-wrap gap-1.5">
+          {SEO_SUGGESTIONS.filter((s) => !resolved.includes(s)).map((s) => (
+            <button
+              key={s}
+              onClick={() => setResolved((r) => [...r, s])}
+              className="px-2 py-1 rounded-md text-[10px] font-medium text-left"
+              style={{ background: `${AMBER}15`, color: AMBER, border: `1px solid ${AMBER}30` }}
+            >
+              {s}
+            </button>
+          ))}
+          {resolved.length === SEO_SUGGESTIONS.length && (
+            <p className="text-[10px]" style={{ color: GREEN }}>All suggestions resolved ✓</p>
+          )}
+        </div>
+      </div>
+
+      {/* Auto-fix button */}
+      <button
+        className="flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold"
+        style={{ background: PRIMARY, color: "#fff" }}
+        onClick={() => setResolved(SEO_SUGGESTIONS)}
+      >
+        <Zap size={12} /> Auto-fix All
+      </button>
+    </motion.div>
+  );
+}
+
+// ─── E. BrandGuardPanel ───────────────────────────────────────────────────────
+type BrandIssue = { label: string; issue: string };
+
+const INITIAL_ISSUES: BrandIssue[] = [
+  { label: "Banned Words", issue: '1 found: "leverage"' },
+  { label: "Competitor Mentions", issue: '1 found: "Salesforce"' },
+];
+
+function BrandGuardPanel() {
+  const [fixedIssues, setFixedIssues] = useState<string[]>([]);
+  const CHECKLIST = [
+    { label: "Tone", pass: true },
+    { label: "Voice", pass: true },
+    { label: "Terminology", pass: true },
+    { label: "Banned Words", pass: false },
+    { label: "Competitor Mentions", pass: false },
+  ];
+
+  const remainingIssues = INITIAL_ISSUES.filter((i) => !fixedIssues.includes(i.label));
+  const allClear = remainingIssues.length === 0;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 16 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 16 }}
+      className="flex flex-col gap-4 rounded-xl p-4"
+      style={{ width: 280, flexShrink: 0, background: CARD, border: `1px solid ${BORDER}` }}
+    >
+      {/* Status badge */}
+      <div className="flex flex-col items-center gap-2 py-3">
+        <ShieldCheck size={28} style={{ color: allClear ? GREEN : AMBER }} />
+        <span
+          className="px-3 py-1 rounded-full text-xs font-bold"
+          style={{ background: allClear ? `${GREEN}15` : `${AMBER}20`, color: allClear ? GREEN : AMBER }}
+        >
+          {allClear ? "BRAND COMPLIANT" : `ISSUES FOUND (${remainingIssues.length})`}
+        </span>
+      </div>
+
+      {/* Checklist */}
+      <div className="flex flex-col gap-2">
+        {CHECKLIST.map(({ label, pass }) => {
+          const isFixed = fixedIssues.includes(label);
+          const showPass = pass || isFixed;
+          const issue = INITIAL_ISSUES.find((i) => i.label === label);
+          return (
+            <div key={label} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {showPass ? (
+                  <CheckCircle2 size={14} style={{ color: GREEN }} />
+                ) : (
+                  <AlertTriangle size={14} style={{ color: AMBER }} />
+                )}
+                <div>
+                  <p className="text-xs font-medium" style={{ color: DARK_TEXT }}>{label}</p>
+                  {!showPass && issue && (
+                    <p className="text-[10px]" style={{ color: AMBER }}>{issue.issue}</p>
+                  )}
+                </div>
+              </div>
+              {!showPass && (
+                <button
+                  onClick={() => setFixedIssues((f) => [...f, label])}
+                  className="px-2 py-0.5 rounded-md text-[10px] font-semibold"
+                  style={{ background: `${GREEN}15`, color: GREEN }}
+                >
+                  Fix
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Report button */}
+      <button
+        className="flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold mt-auto"
+        style={{ background: PRIMARY, color: "#fff" }}
+      >
+        <FileText size={12} /> Generate Brand Report
+      </button>
+    </motion.div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TAB: AI WRITER (updated)
+// ═══════════════════════════════════════════════════════════════════════════════
+
 function AIWriterTab() {
   const [contentType, setContentType] = useState("Blog Post");
   const [tone, setTone] = useState("Professional");
@@ -135,6 +540,20 @@ function AIWriterTab() {
   const [generating, setGenerating] = useState(false);
   const [seoOptimizing, setSeoOptimizing] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  // New state
+  const [showPublish, setShowPublish] = useState(false);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [showSEOPanel, setShowSEOPanel] = useState(false);
+  const [showBrandGuard, setShowBrandGuard] = useState(false);
+  const [aiCommand, setAiCommand] = useState("");
+  const [showAICommand, setShowAICommand] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToast(msg);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   const handleGenerate = () => {
     setGenerating(true);
@@ -151,248 +570,363 @@ function AIWriterTab() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleAICommandSelect = (cmd: string) => {
+    showToast(`Running ${cmd}…`);
+    setAiCommand("");
+    setShowAICommand(false);
+  };
+
   return (
-    <div className="grid grid-cols-2 gap-6">
-      {/* Left: Input panel */}
-      <div className="flex flex-col gap-4 rounded-xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-        <h3 className="text-sm font-semibold" style={{ color: DARK_TEXT }}>Content Settings</h3>
-
-        {/* Content type */}
-        <div>
-          <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Content Type</p>
-          <div className="flex flex-wrap gap-1.5">
-            {CONTENT_TYPES.map((t) => (
-              <button
-                key={t}
-                onClick={() => setContentType(t)}
-                className="px-2.5 py-1 rounded-md text-xs font-medium transition-colors"
-                style={{
-                  background: contentType === t ? PRIMARY : "transparent",
-                  color: contentType === t ? "#fff" : DARK_TEXT,
-                  border: `1px solid ${contentType === t ? PRIMARY : BORDER}`,
-                }}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Topic */}
-        <div>
-          <p className="text-xs font-medium mb-1.5" style={{ color: MUTED }}>Topic / Keyword</p>
-          <textarea
-            className="w-full rounded-lg px-3 py-2 text-sm resize-none outline-none"
-            style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}`, color: DARK_TEXT, minHeight: 72 }}
-            defaultValue="How AI agents are replacing marketing teams in 2026"
-          />
-        </div>
-
-        {/* Tone */}
-        <div>
-          <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Tone</p>
-          <div className="flex gap-1.5">
-            {TONES.map((t) => (
-              <button
-                key={t}
-                onClick={() => setTone(t)}
-                className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
-                style={{
-                  background: tone === t ? "hsl(25,62%,25%)/10" : "transparent",
-                  color: tone === t ? PRIMARY : MUTED,
-                  border: `1px solid ${tone === t ? PRIMARY : BORDER}`,
-                }}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Persona */}
-        <div>
-          <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Target Persona</p>
-          <div className="flex gap-1.5">
-            {PERSONAS.map((p) => (
-              <button
-                key={p}
-                onClick={() => setPersona(p)}
-                className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
-                style={{
-                  background: persona === p ? "hsl(25,62%,25%)/10" : "transparent",
-                  color: persona === p ? PRIMARY : MUTED,
-                  border: `1px solid ${persona === p ? PRIMARY : BORDER}`,
-                }}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Word count */}
-        <div>
-          <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Word Count</p>
-          <div className="flex gap-1.5">
-            {WORD_COUNTS.map((w) => (
-              <button
-                key={w}
-                onClick={() => setWordCount(w)}
-                className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
-                style={{
-                  background: wordCount === w ? "hsl(25,62%,25%)/10" : "transparent",
-                  color: wordCount === w ? PRIMARY : MUTED,
-                  border: `1px solid ${wordCount === w ? PRIMARY : BORDER}`,
-                }}
-              >
-                {w} words
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Brand voice toggle */}
-        <div className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}` }}>
-          <div>
-            <p className="text-xs font-semibold" style={{ color: DARK_TEXT }}>Brand Voice</p>
-            <p className="text-xs" style={{ color: MUTED }}>Skott Tone Guidelines applied</p>
-          </div>
+    <div className="flex flex-col gap-4">
+      {/* ── Toolbar row ── */}
+      <div className="flex items-center justify-between">
+        {/* Left: Version History */}
+        <div className="relative">
           <button
-            onClick={() => setBrandVoice(!brandVoice)}
-            className="relative w-10 h-5 rounded-full transition-colors"
-            style={{ background: brandVoice ? GREEN : BORDER }}
-          >
-            <span
-              className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow-sm"
-              style={{ transform: brandVoice ? "translateX(21px)" : "translateX(2px)" }}
-            />
-          </button>
-        </div>
-
-        {/* Generate button */}
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-opacity"
-          style={{ background: PRIMARY, color: "#fff", opacity: generating ? 0.7 : 1 }}
-        >
-          {generating ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
-          {generating ? "Generating…" : "Generate with AI"}
-        </button>
-
-        {/* Secondary actions */}
-        <div className="flex gap-2">
-          <button
-            onClick={handleSeoOptimize}
-            disabled={seoOptimizing}
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-colors"
-            style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}
-          >
-            {seoOptimizing ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
-            SEO Optimize
-          </button>
-          <button
-            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border"
-            style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}
-          >
-            <RefreshCw size={12} />
-            Repurpose
-          </button>
-        </div>
-      </div>
-
-      {/* Right: Output panel */}
-      <div className="flex flex-col gap-4 rounded-xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
-        {/* Score bar */}
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium" style={{ color: MUTED }}>SEO Score</span>
-            <span className="text-sm font-bold" style={{ color: GREEN }}>84/100</span>
-          </div>
-          <div className="w-px h-4" style={{ background: BORDER }} />
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium" style={{ color: MUTED }}>Readability</span>
-            <span className="text-sm font-bold" style={{ color: AMBER }}>72</span>
-          </div>
-          <div className="w-px h-4" style={{ background: BORDER }} />
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs font-medium" style={{ color: MUTED }}>Word Count</span>
-            <span className="text-sm font-bold" style={{ color: DARK_TEXT }}>1,240</span>
-          </div>
-          <div className="ml-auto">
-            <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ background: `${GREEN}15`, color: GREEN }}>Ready to Publish</span>
-          </div>
-        </div>
-
-        {/* Content output */}
-        <AnimatePresence mode="wait">
-          {generating ? (
-            <motion.div
-              key="loading"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex-1 flex flex-col items-center justify-center gap-3 min-h-[320px]"
-            >
-              <Loader2 size={32} className="animate-spin" style={{ color: PRIMARY }} />
-              <p className="text-sm font-medium" style={{ color: MUTED }}>Generating your content…</p>
-              <div className="flex flex-col gap-1.5 w-full max-w-xs">
-                {["Researching topic…", "Analyzing competitors…", "Drafting content…"].map((step, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <CheckCircle2 size={12} style={{ color: GREEN }} />
-                    <span className="text-xs" style={{ color: MUTED }}>{step}</span>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex-1 overflow-y-auto text-sm leading-relaxed rounded-lg p-4 max-h-[420px]"
-              style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}`, color: DARK_TEXT }}
-            >
-              {BLOG_DRAFT.split("\n").map((line, i) => {
-                if (line.startsWith("# ")) return <h2 key={i} className="text-base font-bold mb-3" style={{ color: DARK_TEXT }}>{line.slice(2)}</h2>;
-                if (line.startsWith("## ")) return <h3 key={i} className="text-sm font-semibold mt-4 mb-2" style={{ color: PRIMARY }}>{line.slice(3)}</h3>;
-                if (line.startsWith("**")) return <p key={i} className="mt-3 font-semibold text-xs" style={{ color: DARK_TEXT }}>{line.replace(/\*\*/g, "")}</p>;
-                if (line.trim() === "") return <div key={i} className="h-2" />;
-                return <p key={i} className="text-xs leading-relaxed mb-2" style={{ color: "#4a3020" }}>{line}</p>;
-              })}
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Action buttons */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={handleCopy}
+            onClick={() => setShowVersionHistory((v) => !v)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
-            style={{ border: `1px solid ${BORDER}`, color: copied ? GREEN : DARK_TEXT, background: "transparent" }}
+            style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: showVersionHistory ? `${PRIMARY}10` : CARD }}
           >
-            {copied ? <CheckCircle2 size={12} /> : <Copy size={12} />}
-            {copied ? "Copied!" : "Copy"}
+            <Clock size={12} style={{ color: PRIMARY }} />
+            Version History
+            {showVersionHistory ? <ChevronUp size={12} style={{ color: MUTED }} /> : <ChevronDown size={12} style={{ color: MUTED }} />}
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border" style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}>
-            <Pencil size={12} /> Edit
+          <AnimatePresence>
+            {showVersionHistory && (
+              <VersionHistoryDropdown
+                onToast={(msg) => { showToast(msg); setShowVersionHistory(false); }}
+              />
+            )}
+          </AnimatePresence>
+        </div>
+
+        {/* Right: panel toggles + publish */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => { setShowSEOPanel((v) => !v); setShowBrandGuard(false); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+            style={{ border: `1px solid ${showSEOPanel ? GREEN : BORDER}`, color: showSEOPanel ? GREEN : DARK_TEXT, background: showSEOPanel ? `${GREEN}10` : CARD }}
+          >
+            <TrendingUp size={12} />
+            SEO Score
+            <span className="font-bold" style={{ color: GREEN }}>84</span>
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium" style={{ background: PRIMARY, color: "#fff" }}>
+          <button
+            onClick={() => { setShowBrandGuard((v) => !v); setShowSEOPanel(false); }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+            style={{ border: `1px solid ${showBrandGuard ? GREEN : BORDER}`, color: showBrandGuard ? GREEN : DARK_TEXT, background: showBrandGuard ? `${GREEN}10` : CARD }}
+          >
+            <ShieldCheck size={12} style={{ color: GREEN }} />
+            Brand Guard
+          </button>
+          <button
+            onClick={() => setShowPublish(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold"
+            style={{ background: GREEN, color: "#fff" }}
+          >
             <Send size={12} /> Publish
           </button>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border" style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}>
-            <Calendar size={12} /> Schedule
-          </button>
-          <div className="flex items-center gap-1 ml-auto">
-            <span className="text-xs" style={{ color: MUTED }}>Repurpose →</span>
-            {[{ icon: Link, label: "LinkedIn" }, { icon: Mail, label: "Email" }, { icon: Hash, label: "Twitter" }].map(({ icon: Icon, label }) => (
-              <button key={label} title={label} className="p-1.5 rounded-lg border" style={{ border: `1px solid ${BORDER}`, color: MUTED }}>
-                <Icon size={12} />
-              </button>
-            ))}
-          </div>
         </div>
       </div>
+
+      {/* ── Main area (2-col + optional right panel) ── */}
+      <div className="flex gap-4">
+        <div className="flex-1 grid grid-cols-2 gap-6">
+          {/* Left: Input panel */}
+          <div className="flex flex-col gap-4 rounded-xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+            <h3 className="text-sm font-semibold" style={{ color: DARK_TEXT }}>Content Settings</h3>
+
+            {/* Content type */}
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Content Type</p>
+              <div className="flex flex-wrap gap-1.5">
+                {CONTENT_TYPES.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setContentType(t)}
+                    className="px-2.5 py-1 rounded-md text-xs font-medium transition-colors"
+                    style={{
+                      background: contentType === t ? PRIMARY : "transparent",
+                      color: contentType === t ? "#fff" : DARK_TEXT,
+                      border: `1px solid ${contentType === t ? PRIMARY : BORDER}`,
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Topic */}
+            <div>
+              <p className="text-xs font-medium mb-1.5" style={{ color: MUTED }}>Topic / Keyword</p>
+              <textarea
+                className="w-full rounded-lg px-3 py-2 text-sm resize-none outline-none"
+                style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}`, color: DARK_TEXT, minHeight: 72 }}
+                defaultValue="How AI agents are replacing marketing teams in 2026"
+              />
+            </div>
+
+            {/* AI Command input */}
+            <div className="relative">
+              <p className="text-xs font-medium mb-1.5" style={{ color: MUTED }}>AI Command</p>
+              <input
+                type="text"
+                value={aiCommand}
+                onChange={(e) => {
+                  setAiCommand(e.target.value);
+                  setShowAICommand(e.target.value.startsWith("/"));
+                }}
+                onBlur={() => setTimeout(() => setShowAICommand(false), 150)}
+                placeholder="Type / to trigger AI commands…"
+                className="w-full rounded-lg px-3 py-2 text-sm outline-none"
+                style={{ background: "hsl(36,33%,94%)", border: `1px solid ${showAICommand ? PRIMARY : BORDER}`, color: DARK_TEXT }}
+              />
+              <AnimatePresence>
+                {showAICommand && (
+                  <AICommandMenu query={aiCommand} onSelect={handleAICommandSelect} />
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Tone */}
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Tone</p>
+              <div className="flex gap-1.5">
+                {TONES.map((t) => (
+                  <button
+                    key={t}
+                    onClick={() => setTone(t)}
+                    className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
+                    style={{
+                      background: tone === t ? "hsl(25,62%,25%)/10" : "transparent",
+                      color: tone === t ? PRIMARY : MUTED,
+                      border: `1px solid ${tone === t ? PRIMARY : BORDER}`,
+                    }}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Persona */}
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Target Persona</p>
+              <div className="flex gap-1.5">
+                {PERSONAS.map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setPersona(p)}
+                    className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
+                    style={{
+                      background: persona === p ? "hsl(25,62%,25%)/10" : "transparent",
+                      color: persona === p ? PRIMARY : MUTED,
+                      border: `1px solid ${persona === p ? PRIMARY : BORDER}`,
+                    }}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Word count */}
+            <div>
+              <p className="text-xs font-medium mb-2" style={{ color: MUTED }}>Word Count</p>
+              <div className="flex gap-1.5">
+                {WORD_COUNTS.map((w) => (
+                  <button
+                    key={w}
+                    onClick={() => setWordCount(w)}
+                    className="flex-1 py-1.5 rounded-md text-xs font-medium transition-colors"
+                    style={{
+                      background: wordCount === w ? "hsl(25,62%,25%)/10" : "transparent",
+                      color: wordCount === w ? PRIMARY : MUTED,
+                      border: `1px solid ${wordCount === w ? PRIMARY : BORDER}`,
+                    }}
+                  >
+                    {w} words
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Brand voice toggle */}
+            <div className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}` }}>
+              <div>
+                <p className="text-xs font-semibold" style={{ color: DARK_TEXT }}>Brand Voice</p>
+                <p className="text-xs" style={{ color: MUTED }}>Skott Tone Guidelines applied</p>
+              </div>
+              <button
+                onClick={() => setBrandVoice(!brandVoice)}
+                className="relative w-10 h-5 rounded-full transition-colors"
+                style={{ background: brandVoice ? GREEN : BORDER }}
+              >
+                <span
+                  className="absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform shadow-sm"
+                  style={{ transform: brandVoice ? "translateX(21px)" : "translateX(2px)" }}
+                />
+              </button>
+            </div>
+
+            {/* Generate button */}
+            <button
+              onClick={handleGenerate}
+              disabled={generating}
+              className="flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold transition-opacity"
+              style={{ background: PRIMARY, color: "#fff", opacity: generating ? 0.7 : 1 }}
+            >
+              {generating ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
+              {generating ? "Generating…" : "Generate with AI"}
+            </button>
+
+            {/* Secondary actions */}
+            <div className="flex gap-2">
+              <button
+                onClick={handleSeoOptimize}
+                disabled={seoOptimizing}
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border transition-colors"
+                style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}
+              >
+                {seoOptimizing ? <Loader2 size={12} className="animate-spin" /> : <Search size={12} />}
+                SEO Optimize
+              </button>
+              <button
+                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-medium border"
+                style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}
+              >
+                <RefreshCw size={12} />
+                Repurpose
+              </button>
+            </div>
+          </div>
+
+          {/* Right: Output panel */}
+          <div className="flex flex-col gap-4 rounded-xl p-5" style={{ background: CARD, border: `1px solid ${BORDER}` }}>
+            {/* Score bar */}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-medium" style={{ color: MUTED }}>SEO Score</span>
+                <span className="text-sm font-bold" style={{ color: GREEN }}>84/100</span>
+              </div>
+              <div className="w-px h-4" style={{ background: BORDER }} />
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-medium" style={{ color: MUTED }}>Readability</span>
+                <span className="text-sm font-bold" style={{ color: AMBER }}>72</span>
+              </div>
+              <div className="w-px h-4" style={{ background: BORDER }} />
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs font-medium" style={{ color: MUTED }}>Word Count</span>
+                <span className="text-sm font-bold" style={{ color: DARK_TEXT }}>1,240</span>
+              </div>
+              <div className="ml-auto">
+                <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ background: `${GREEN}15`, color: GREEN }}>Ready to Publish</span>
+              </div>
+            </div>
+
+            {/* Content output */}
+            <AnimatePresence mode="wait">
+              {generating ? (
+                <motion.div
+                  key="loading"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 flex flex-col items-center justify-center gap-3 min-h-[320px]"
+                >
+                  <Loader2 size={32} className="animate-spin" style={{ color: PRIMARY }} />
+                  <p className="text-sm font-medium" style={{ color: MUTED }}>Generating your content…</p>
+                  <div className="flex flex-col gap-1.5 w-full max-w-xs">
+                    {["Researching topic…", "Analyzing competitors…", "Drafting content…"].map((step, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <CheckCircle2 size={12} style={{ color: GREEN }} />
+                        <span className="text-xs" style={{ color: MUTED }}>{step}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="content"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex-1 overflow-y-auto text-sm leading-relaxed rounded-lg p-4 max-h-[420px]"
+                  style={{ background: "hsl(36,33%,94%)", border: `1px solid ${BORDER}`, color: DARK_TEXT }}
+                >
+                  {BLOG_DRAFT.split("\n").map((line, i) => {
+                    if (line.startsWith("# ")) return <h2 key={i} className="text-base font-bold mb-3" style={{ color: DARK_TEXT }}>{line.slice(2)}</h2>;
+                    if (line.startsWith("## ")) return <h3 key={i} className="text-sm font-semibold mt-4 mb-2" style={{ color: PRIMARY }}>{line.slice(3)}</h3>;
+                    if (line.startsWith("**")) return <p key={i} className="mt-3 font-semibold text-xs" style={{ color: DARK_TEXT }}>{line.replace(/\*\*/g, "")}</p>;
+                    if (line.trim() === "") return <div key={i} className="h-2" />;
+                    return <p key={i} className="text-xs leading-relaxed mb-2" style={{ color: "#4a3020" }}>{line}</p>;
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Action buttons */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors"
+                style={{ border: `1px solid ${BORDER}`, color: copied ? GREEN : DARK_TEXT, background: "transparent" }}
+              >
+                {copied ? <CheckCircle2 size={12} /> : <Copy size={12} />}
+                {copied ? "Copied!" : "Copy"}
+              </button>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border" style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}>
+                <Pencil size={12} /> Edit
+              </button>
+              <button
+                onClick={() => setShowPublish(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
+                style={{ background: GREEN, color: "#fff" }}
+              >
+                <Send size={12} /> Publish
+              </button>
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border" style={{ border: `1px solid ${BORDER}`, color: DARK_TEXT, background: "transparent" }}>
+                <Calendar size={12} /> Schedule
+              </button>
+              <div className="flex items-center gap-1 ml-auto">
+                <span className="text-xs" style={{ color: MUTED }}>Repurpose →</span>
+                {[{ icon: Link, label: "LinkedIn" }, { icon: Mail, label: "Email" }, { icon: Hash, label: "Twitter" }].map(({ icon: Icon, label }) => (
+                  <button key={label} title={label} className="p-1.5 rounded-lg border" style={{ border: `1px solid ${BORDER}`, color: MUTED }}>
+                    <Icon size={12} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Optional right panels */}
+        <AnimatePresence>
+          {showSEOPanel && <SEOScorePanel />}
+          {showBrandGuard && <BrandGuardPanel />}
+        </AnimatePresence>
+      </div>
+
+      {/* Publish Modal */}
+      <AnimatePresence>
+        {showPublish && <PublishModal onClose={() => setShowPublish(false)} />}
+      </AnimatePresence>
+
+      {/* Toast */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl shadow-lg text-sm font-medium flex items-center gap-2"
+            style={{ background: DARK_TEXT, color: "#fff" }}
+          >
+            <CheckCircle2 size={14} style={{ color: GREEN }} />
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -1065,6 +1599,34 @@ export default function ContentStudioPage() {
             <Zap size={14} style={{ color: PRIMARY }} /> Batch Generate
           </button>
         </div>
+      </div>
+
+      {/* Workflow Banner */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 8,
+        background: CARD, border: `1px solid ${BORDER}`, borderRadius: 10,
+        padding: "10px 16px", marginBottom: 0, flexWrap: "wrap",
+      }}>
+        <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.12em", color: MUTED, textTransform: "uppercase" }}>Workflow</span>
+        <span style={{ color: MUTED, fontSize: 12 }}>1. Plan</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: PRIMARY, fontWeight: 700, fontSize: 12 }}>2. Content</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>3. Creative</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>4. Email</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>5. Social</span>
+        <ChevronRight size={12} style={{ color: MUTED, flexShrink: 0 }} />
+        <span style={{ color: MUTED, fontSize: 12 }}>6. Launch</span>
+        <a href="/creative-hub" style={{
+          marginLeft: "auto", display: "flex", alignItems: "center", gap: 4,
+          fontSize: 11, fontWeight: 600, color: "#fff", background: PRIMARY,
+          border: "none", borderRadius: 7, padding: "6px 12px", cursor: "pointer",
+          textDecoration: "none", whiteSpace: "nowrap",
+        }}>
+          Continue to Creative Hub →
+        </a>
       </div>
 
       {/* KPI cards */}

@@ -209,6 +209,53 @@ function CMOView() {
         </div>
       </div>
 
+      {/* End-to-End Workflows */}
+      <div className="mt-10">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: MUTED }}>End-to-End Workflows</span>
+            <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: `${PRIMARY}15`, color: PRIMARY }}>12 ACTIVE</span>
+          </div>
+          <span className="text-[11px]" style={{ color: MUTED }}>AI-orchestrated multi-agent journeys</span>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            { title: "Campaign Launch Orchestrator",    desc: "Plan → Content → Creative → Email → Social → Paid → Ship", href: "/campaign-planning",      color: PRIMARY, steps: 7 },
+            { title: "SEO Content Factory",             desc: "Keyword research → Brief → Draft → Publish → Track",        href: "/seo",                    color: BLUE,    steps: 5 },
+            { title: "Lead Nurture & Sales Handoff",    desc: "Score → Segment → Nurture → Route → Close",                 href: "/digital/lead-ops",       color: GREEN,   steps: 5 },
+            { title: "Content Atomization",             desc: "Long-form → Blog → Social → Email → Ads → Analytics",       href: "/content-ops",            color: AMBER,   steps: 6 },
+            { title: "Paid Media Performance Rescue",   desc: "Diagnose → Reallocate → Optimize → Monitor → Report",       href: "/paid-media",             color: RED,     steps: 5 },
+            { title: "Website Conversion Optimizer",    desc: "Audit → Gaps → A/B Test → Update → Measure",                href: "/digital/website-ops",    color: BLUE,    steps: 5 },
+            { title: "Event Planning & Promotion",      desc: "Plan → Create Assets → Promote → Capture → Nurture",        href: "/growth/events",          color: PRIMARY, steps: 5 },
+            { title: "Creative Request Pipeline",       desc: "Request → Design → Review → Approve → Deploy",              href: "/creative-hub",           color: AMBER,   steps: 5 },
+            { title: "Brand Crisis Response",           desc: "Alert → Assess → Draft → Publish → Monitor",                href: "/brand-reputation",       color: RED,     steps: 5 },
+            { title: "Sales Content Builder",           desc: "Brief → Research → Draft → Review → Distribute",            href: "/growth/sales-enablement",color: GREEN,   steps: 5 },
+            { title: "Budget Intelligence",             desc: "Audit → Model → Recommend → Approve → Reallocate",          href: "/budget-spend",           color: AMBER,   steps: 5 },
+            { title: "Analyst Briefing Pipeline",       desc: "Research → Brief → Schedule → Present → Follow-up",         href: "/growth/analyst-relations",color: BLUE,  steps: 5 },
+          ].map((w, i) => (
+            <motion.div key={w.title}
+              initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 + i * 0.04 }}
+              whileHover={{ scale: 1.015, boxShadow: "0 6px 20px rgba(58,31,14,0.1)" }}
+              style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 12, padding: "14px 16px", cursor: "pointer" }}>
+              <Link href={w.href} style={{ textDecoration: "none" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 8 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: "50%", background: w.color, marginTop: 5, flexShrink: 0 }} />
+                  <span style={{ fontSize: 10, fontWeight: 700, color: w.color, background: `${w.color}12`, padding: "2px 7px", borderRadius: 99 }}>{w.steps} steps</span>
+                </div>
+                <p style={{ fontSize: 12, fontWeight: 700, color: DARK_TEXT, marginBottom: 4, lineHeight: 1.4 }}>{w.title}</p>
+                <p style={{ fontSize: 11, color: MUTED, lineHeight: 1.45 }}>{w.desc}</p>
+                <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 4 }}>
+                  <div style={{ flex: 1, height: 3, background: BORDER, borderRadius: 99, overflow: "hidden" }}>
+                    <div style={{ width: `${60 + i * 3}%`, height: "100%", background: w.color, borderRadius: 99 }} />
+                  </div>
+                  <span style={{ fontSize: 10, color: w.color, fontWeight: 700 }}>{60 + i * 3}%</span>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
       {/* Bottom two-column */}
       <div className="mt-10 grid grid-cols-2 gap-6">
 
